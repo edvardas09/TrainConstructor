@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:VisualElement style="padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px;">
+        <ui:VisualElement name="new-part-fields" style="margin-bottom: 14px;">
+            <ui:TextField picking-mode="Ignore" label="ID" name="id-text-field" />
+            <uie:EnumField label="Type" name="type-dropdown" type="TrainConstructor.Train.TrainPartType, TrainConstructor.Train" />
+            <uie:EnumField label="Subtype" value="Small" name="subtype-dropdown" type="TrainConstructor.Train.TrainPartSubtype, TrainConstructor.Train" />
+            <uie:ObjectField label="Main texture" name="main-texture-field" />
+            <uie:ObjectField label="Outline texture" name="outline-texture-field" />
+        </ui:VisualElement>
+        <ui:Button text="Create" display-tooltip-when-elided="true" name="create-button" />
+        <ui:ListView focusable="true" name="existing-parts-list" style="margin-top: 14px;" />
+    </ui:VisualElement>
+</ui:UXML>
