@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9338edf14a15c342a3f472c9885cb98, type: 3}
+  m_Name: Train_ChimneyBig_Orange
+  m_EditorClassIdentifier: 
+  Id: Train_ChimneyBig_Orange
+  Type: 3
+  SubType: 1
+  MainTexture: {fileID: 21300000, guid: cdb6be78231eca84cbc195e6a782ac43, type: 3}
+  OutlineTexture: {fileID: 21300000, guid: 7ef4b8378d52e5445af9e7111238326a, type: 3}

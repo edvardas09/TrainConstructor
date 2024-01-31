@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9338edf14a15c342a3f472c9885cb98, type: 3}
-  m_Name: test2
+  m_Name: Train_Cabin_Green
   m_EditorClassIdentifier: 
-  Id: test2
-  Type: 3
-  SubType: 1
-  MainTexture: {fileID: 21300000, guid: 00b747371e52d614a8fc362d7860fb7b, type: 3}
-  OutlineTexture: {fileID: 21300000, guid: e52d7dc863d84734a84ab96e65568fdb, type: 3}
+  Id: Train_Cabin_Green
+  Type: 2
+  SubType: 0
+  MainTexture: {fileID: 21300000, guid: 6a15a82bf9207c645b5306dae655f6da, type: 3}
+  OutlineTexture: {fileID: 21300000, guid: 73c542af83f4add4485ca6a3d2df8197, type: 3}
