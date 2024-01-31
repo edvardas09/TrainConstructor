@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6099e96f8401c44b9e35a8a07c87393, type: 3}
   m_Name: TrainPartType_Wheel
   m_EditorClassIdentifier: 
-  Type: Wheel
-  SubTypes: []
+  Type: 1
+  SubTypes: 

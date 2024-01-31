@@ -4,10 +4,14 @@
             <ui:TextField picking-mode="Ignore" label="ID" name="id-text-field" />
             <uie:EnumField label="Type" name="type-dropdown" type="TrainConstructor.Train.TrainPartType, TrainConstructor.Train" />
             <uie:EnumField label="Subtype" value="Small" name="subtype-dropdown" type="TrainConstructor.Train.TrainPartSubtype, TrainConstructor.Train" />
-            <uie:ObjectField label="Main texture" name="main-texture-field" />
-            <uie:ObjectField label="Outline texture" name="outline-texture-field" />
+            <uie:ObjectField label="Main texture" name="main-texture-field" type="UnityEngine.Sprite, UnityEngine" />
+            <uie:ObjectField label="Outline texture" name="outline-texture-field" type="UnityEngine.Sprite, UnityEngine" />
         </ui:VisualElement>
         <ui:Button text="Create" display-tooltip-when-elided="true" name="create-button" />
-        <ui:ListView focusable="true" name="existing-parts-list" style="margin-top: 14px;" />
+        <ui:Label display-tooltip-when-elided="true" name="error-label" style="-unity-text-align: upper-center; color: rgb(255, 0, 0); white-space: normal;" />
+        <ui:VisualElement style="margin-top: 16px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; padding-left: 6px; padding-right: 6px; padding-top: 6px; padding-bottom: 6px;">
+            <ui:Label text="Parts in project:" display-tooltip-when-elided="true" style="border-bottom-width: 16px;" />
+            <ui:ScrollView name="existing-parts-list" style="margin-top: 0;" />
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

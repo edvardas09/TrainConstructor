@@ -9,8 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6099e96f8401c44b9e35a8a07c87393, type: 3}
-  m_Name: TrainPartType_Chimney
+  m_Script: {fileID: 11500000, guid: a9338edf14a15c342a3f472c9885cb98, type: 3}
+  m_Name: test2
   m_EditorClassIdentifier: 
+  Id: test2
   Type: 3
-  SubTypes: 0000000001000000
+  SubType: 1
+  MainTexture: {fileID: 21300000, guid: 00b747371e52d614a8fc362d7860fb7b, type: 3}
+  OutlineTexture: {fileID: 21300000, guid: e52d7dc863d84734a84ab96e65568fdb, type: 3}
