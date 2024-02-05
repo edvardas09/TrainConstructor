@@ -6,7 +6,7 @@ namespace TrainConstructor.TrainEditor
     {
         [SerializeField] private float paddingFromSides = 0.5f;
 
-        private void Awake()
+        private void Update()
         {
             Camera _camera = Camera.main;
             float _screenAspect = (float)Screen.width / (float)Screen.height;

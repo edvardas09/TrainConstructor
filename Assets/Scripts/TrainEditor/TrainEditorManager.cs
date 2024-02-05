@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TrainConstructor.Train;
@@ -10,6 +11,7 @@ namespace TrainConstructor.TrainEditor
     {
         [Tooltip("The order of the train parts in the editor, add only parts with different types or subtypes")]
         [SerializeField] private List<TrainPartSO> trainPartsOrder = new List<TrainPartSO>();
+        [SerializeField] private DeletePartObject deletePartObject;
 
         [SerializeField] private TrainPartSelection trainPartSelectionPrefab;
         [SerializeField] private Transform trainPartSelectionsParent;
@@ -18,9 +20,13 @@ namespace TrainConstructor.TrainEditor
         [SerializeField] private Transform trainPartsParent;
 
         private List<TrainPartSO> trainParts = new List<TrainPartSO>();
+        private int offsetMultiplier;
+        private bool isOverDeleteObject;
 
         private void Awake()
         {
+            deletePartObject.MouseOverStateChanged += OnDeleteStateChanged;
+
             LoadTrainParts();
             ValidateParts();
             SpawnPartSelections();
@@ -69,6 +75,24 @@ namespace TrainConstructor.TrainEditor
             TrainPart _trainPart = Instantiate(trainPartPrefab, trainPartsParent);
             int _order = trainPartsOrder.FindIndex(_partOrder => _partOrder.Type == _trainPartSO.Type && _partOrder.SubType == _trainPartSO.SubType);
             _trainPart.Setup(_trainPartSO, _order);
+            _trainPart.PartPutDown += OnPartPutDown;
+        }
+
+        private void OnPartPutDown(TrainPart _trainPart)
+        {
+            if (isOverDeleteObject)
+            {
+                Destroy(_trainPart.gameObject);
+                return;
+            }
+
+            offsetMultiplier++;
+            _trainPart.OffsetPart(offsetMultiplier);
+        }
+
+        private void OnDeleteStateChanged()
+        {
+            isOverDeleteObject = !isOverDeleteObject;
         }
     }
 }

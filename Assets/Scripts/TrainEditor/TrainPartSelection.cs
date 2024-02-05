@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace TrainConstructor.TrainEditor
 {
-    public class TrainPartSelection : MonoBehaviour, IPointerDownHandler
+    public class TrainPartSelection : MonoBehaviour
     {
         [SerializeField] private Image image;
 
@@ -20,7 +20,7 @@ namespace TrainConstructor.TrainEditor
             image.sprite = _trainPartSO.MainTexture;
         }
 
-        public void OnPointerDown(PointerEventData _eventData)
+        public void OnMouseDown()
         {
             TrainPartSelected?.Invoke(trainPartSO);
         }
