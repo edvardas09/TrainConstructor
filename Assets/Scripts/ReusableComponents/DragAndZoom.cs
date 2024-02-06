@@ -1,11 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace TrainConstructor.TrainEditor
+namespace TrainConstructor.ReusableComponents
 {
-    public class Train : MonoBehaviour
+    public class DragAndZoom : MonoBehaviour
     {
+        [SerializeField] private float minScale = 0.5f;
+        [SerializeField] private float maxScale = 2f;
+
         private Vector3 offsetFromCenter;
 
         private void OnMouseDown()
@@ -26,7 +27,7 @@ namespace TrainConstructor.TrainEditor
             if (Input.mouseScrollDelta.y != 0)
             {
                 float _scale = transform.localScale.x + Input.mouseScrollDelta.y * 0.1f;
-                _scale = Mathf.Clamp(_scale, 0.5f, 2);
+                _scale = Mathf.Clamp(_scale, minScale, maxScale);
                 transform.localScale = new Vector3(_scale, _scale, 1);
             }
         }

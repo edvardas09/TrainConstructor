@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace TrainConstructor.TrainEditor
 {
-    public class TrainPartsSelectionView : MonoBehaviour
+    public class ToolsView : MonoBehaviour
     {
         [SerializeField] private float paddingFromSides = 0.5f;
 

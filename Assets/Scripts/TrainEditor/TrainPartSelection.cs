@@ -1,7 +1,6 @@
 using System;
 using TrainConstructor.Train;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace TrainConstructor.TrainEditor
