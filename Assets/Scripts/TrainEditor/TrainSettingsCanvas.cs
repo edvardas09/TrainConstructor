@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using TMPro;
 using TrainConstructor.ReusableComponents;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +9,7 @@ namespace TrainConstructor.TrainEditor
 {
     public class TrainSettingsCanvas : MonoBehaviour
     {
-        [SerializeField] private Train.Train train;
+        [SerializeField] private TrainEditor trainEditor;
 
         [Header("UI references")]
         [SerializeField] private TMP_InputField trainIdInputField;
@@ -28,12 +26,21 @@ namespace TrainConstructor.TrainEditor
         [SerializeField] private CreatedTrainButton createdTrainButtonPrefab;
 
         private const string DELETE_TRAIN_CONFIRMATION_TEXT = "Are you sure you want to delete this train?";
-        private const string CREATE_NEW_TRAIN_WARNING_TEXT = "Are you sure you want to create new train? All unsaved changes will be deleted";
+        private const string CREATE_NEW_TRAIN_WARNING_TEXT  = "Are you sure you want to create new train? All unsaved changes will be deleted";
+        private const string LOAD_TRAIN_WARNING_TEXT        = "Are you sure you want to load this train? All unsaved changes will be deleted";
+        private const string TRAIN_NOT_SAVED_WARNING_TEXT   = "Train must be saved before taking snapshot";
+        private const string TRAIN_ID_EMPTY_WARNING_TEXT    = "Train ID cannot be empty!";
+        private const string TRAIN_ID_EXISTS_WARNING_TEXT   = "Train with this ID already exists!";
 
-        private List<string> createdTrainsIds = new List<string>();
+        private List<CreatedTrainButton> createdTrainButtons = new List<CreatedTrainButton>();
 
         private void OnEnable()
         {
+            trainEditor.CreatedTrainsLoaded += SpawnCreatedTrainButtons;
+            trainEditor.TrainAdded += OnTrainAdded;
+            trainEditor.TrainDeleted += OnTrainDeleted;
+            trainEditor.SnapshotUpdated += OnSnapshotUpdated;
+
             createNewButton.onClick.AddListener(ShowCreationConfirmationPanel);
             saveButton.onClick.AddListener(SaveTrain);
             snapshotButton.onClick.AddListener(TakeSnapshot);
@@ -42,35 +49,35 @@ namespace TrainConstructor.TrainEditor
 
         private void OnDisable()
         {
+            trainEditor.CreatedTrainsLoaded -= SpawnCreatedTrainButtons;
+            trainEditor.TrainAdded -= OnTrainAdded;
+            trainEditor.TrainDeleted -= OnTrainDeleted;
+            trainEditor.SnapshotUpdated -= OnSnapshotUpdated;
+
+            createNewButton.onClick.RemoveListener(ShowCreationConfirmationPanel);
             saveButton.onClick.RemoveListener(SaveTrain);
             snapshotButton.onClick.RemoveListener(TakeSnapshot);
             deleteButton.onClick.RemoveListener(ShowTrainDeletionConfirmationPanel);
         }
 
-        private void Start()
+        private void SpawnCreatedTrainButtons(List<Train.Train> _createdTrains)
         {
-            LoadCreatedTrains();
-            SpawnCreatedTrainButtons();
-        }
-
-        private void LoadCreatedTrains()
-        {
-            string[] files = Directory.GetFiles(Paths.CREATED_TRAINS_PATH, "*.prefab", SearchOption.TopDirectoryOnly);
-            foreach (string file in files)
+            foreach (Train.Train _train in _createdTrains)
             {
-                GameObject trainPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(file);
-                Train.Train train = trainPrefab.GetComponent<Train.Train>();
-                createdTrainsIds.Add(train.Id);
+                OnTrainAdded(_train);
             }
         }
 
-        private void SpawnCreatedTrainButtons()
+        private void ShowTrainLoadConfirmationPanel(Train.Train _train)
         {
-            foreach (string _trainId in createdTrainsIds)
-            {
-                CreatedTrainButton createdTrainButton = Instantiate(createdTrainButtonPrefab, createdTrainsParentTransform);
-                createdTrainButton.Setup(_trainId);
-            }
+            confirmationPanel.Show(LOAD_TRAIN_WARNING_TEXT, () => LoadTrain(_train), null);
+        }
+
+        private void LoadTrain(Train.Train _train)
+        {
+            trainEditor.LoadTrain(_train);
+            trainIdInputField.text = _train.Id;
+            isLockedWithAnAdToggle.isOn = _train.IsLockedWithAnAd;
         }
 
         private void ResetOptions()
@@ -86,7 +93,7 @@ namespace TrainConstructor.TrainEditor
 
         private void DeleteTrain()
         {
-            TrainEditor.Instance.DeleteTrain();
+            trainEditor.DeleteTrain();
             ResetOptions();
         }
 
@@ -97,13 +104,19 @@ namespace TrainConstructor.TrainEditor
 
         private void CreateNewTrain()
         {
-            TrainEditor.Instance.ResetEditor();
+            trainEditor.ResetEditor();
             ResetOptions();
         }
 
         private void TakeSnapshot()
         {
-            TrainEditor.Instance.TakeSnapshot();
+            if (string.IsNullOrEmpty(trainEditor.TrainObject.Id))
+            {
+                warningText.text = TRAIN_NOT_SAVED_WARNING_TEXT;
+                return;
+            }
+
+            trainEditor.TakeSnapshot();
         }
 
         private void SaveTrain()
@@ -111,24 +124,45 @@ namespace TrainConstructor.TrainEditor
             string _trainId = trainIdInputField.text;
             bool _isLockedWithAnAd = isLockedWithAnAdToggle.isOn;
 
-            if (string.IsNullOrEmpty(_trainId))
+            warningText.text = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(_trainId))
             {
-                warningText.text = "Train ID cannot be empty!";
+                warningText.text = TRAIN_ID_EMPTY_WARNING_TEXT;
                 return;
             }
 
-            if (createdTrainsIds.Exists(_id => _id == _trainId) &&
-                train.Id != _trainId)
+            if (trainEditor.CreatedTrains.Any(_train => _train.Id == _trainId) &&
+                trainEditor.TrainObject.Id != _trainId)
             {
-                warningText.text = "Train with this ID already exists!";
+                warningText.text = TRAIN_ID_EXISTS_WARNING_TEXT;
                 return;
             }
 
-            TrainEditor.Instance.SaveTrain(_trainId, _isLockedWithAnAd);
-            createdTrainsIds.Add(train.Id);
+            trainEditor.SaveTrain(_trainId, _isLockedWithAnAd);
+        }
 
-            CreatedTrainButton createdTrainButton = Instantiate(createdTrainButtonPrefab, createdTrainsParentTransform);
-            createdTrainButton.Setup(_trainId);
+        private void OnTrainAdded(Train.Train _train)
+        {
+            CreatedTrainButton _createdTrainButton = Instantiate(createdTrainButtonPrefab, createdTrainsParentTransform);
+            Texture2D _snapshot = trainEditor.GetTrainSnapshot(_train.Id);
+            _createdTrainButton.Setup(_train, _snapshot);
+            Button _button = _createdTrainButton.GetComponent<Button>();
+            _button.onClick.AddListener(() => ShowTrainLoadConfirmationPanel(_train));
+            createdTrainButtons.Add(_createdTrainButton);
+        }
+
+        private void OnTrainDeleted(Train.Train _train)
+        {
+            CreatedTrainButton _createdTrainButton = createdTrainButtons.Find(_button => _button.Train.Id == _train.Id);
+            createdTrainButtons.Remove(_createdTrainButton);
+            Destroy(_createdTrainButton.gameObject);
+        }
+
+        private void OnSnapshotUpdated(Train.Train _train, Texture2D _snapshot)
+        {
+            CreatedTrainButton _createdTrainButton = createdTrainButtons.Find(_button => _button.Train.Id == _train.Id);
+            _createdTrainButton.Setup(_train, _snapshot);
         }
     }
 }

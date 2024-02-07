@@ -24,6 +24,9 @@ namespace TrainConstructor.ReusableComponents
 
         public void Show(string message, Action onConfirm, Action onCancel)
         {
+            confirmButton.onClick.RemoveAllListeners();
+            cancelButton.onClick.RemoveAllListeners();
+
             messageText.text = message;
             confirmButton.onClick.AddListener(() =>
             {

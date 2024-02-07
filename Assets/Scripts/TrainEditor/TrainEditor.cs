@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TrainConstructor.Train;
 using UnityEditor;
@@ -23,49 +25,80 @@ namespace TrainConstructor.TrainEditor
 
         [Header("Train part references")]
         [SerializeField] private TrainPart trainPartPrefab;
-        [SerializeField] private Train.Train trainObject;
+        [SerializeField] private Transform trainObjectParent;
 
-        public static TrainEditor Instance { get; private set; }
+        private const string DEFAULT_TRAIN_OBJECT_NAME = "Train";
+
+
+        public Action<List<Train.Train>> CreatedTrainsLoaded;
+        public Action<Train.Train> TrainAdded;
+        public Action<Train.Train> TrainDeleted;
+        public Action<Train.Train, Texture2D> SnapshotUpdated;
+
+        public List<Train.Train> CreatedTrains => createdTrains;
+        public Train.Train TrainObject => trainObject;
+
+
+        private Train.Train trainObject;
 
         private List<TrainPartSO> trainParts = new List<TrainPartSO>();
+        private List<Train.Train> createdTrains = new List<Train.Train>();
+        private List<Texture2D> snapshots = new List<Texture2D>();
+
         private int offsetMultiplier;
         private bool isOverDeleteObject;
 
         private void Awake()
         {
-            if (Instance == null)
-            {
-                Instance = this;
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-
             deletePartObject.MouseOverStateChanged += OnDeleteStateChanged;
 
+            LoadSnapshots();
+            LoadCreatedTrains();
             LoadTrainParts();
+
             ValidateParts();
+
+            CreateNewTrain();
             SpawnPartSelections();
+        }
+
+        public void LoadTrain(Train.Train _train)
+        {
+            Destroy(trainObject.gameObject);
+            trainObject = Instantiate(_train, trainObjectParent);
+            offsetMultiplier = trainObject.transform.childCount;
+
+            foreach (Transform _child in trainObject.transform)
+            {
+                TrainPart _trainPart = _child.GetComponent<TrainPart>();
+                int _order = trainPartsOrder.FindIndex(_partOrder => _partOrder.Type == _trainPart.TrainPartSO.Type && _partOrder.SubType == _trainPart.TrainPartSO.SubType);
+                _trainPart.SetOrder(_order);
+                _trainPart.PartPutDown += OnPartPutDown;
+            }
         }
 
         public void ResetEditor()
         {
-            foreach (Transform _child in trainObject.transform)
-            {
-                Destroy(_child.gameObject);
-            }
-
+            Destroy(trainObject.gameObject);
+            CreateNewTrain();
             offsetMultiplier = 0;
-            trainObject.Setup(string.Empty, false);
         }
 
         public void SaveTrain(string _trainId, bool _isLockedWithAnAd)
         {
             trainObject.Setup(_trainId, _isLockedWithAnAd);
             string _path = $"{Paths.CREATED_TRAINS_PATH}/{_trainId}.prefab";
-            PrefabUtility.SaveAsPrefabAsset(trainObject.gameObject, _path);
+            GameObject _savedTrain = PrefabUtility.SaveAsPrefabAsset(trainObject.gameObject, _path);
             AssetDatabase.Refresh();
+
+            if (createdTrains.Any(_train => _train.Id == trainObject.Id))
+            {
+                return;
+            }
+
+            Train.Train _savedTrainComponent = _savedTrain.GetComponent<Train.Train>();
+            createdTrains.Add(_savedTrainComponent);
+            TrainAdded?.Invoke(_savedTrainComponent);
         }
 
         public void TakeSnapshot()
@@ -75,20 +108,38 @@ namespace TrainConstructor.TrainEditor
 
         public void DeleteTrain()
         {
-            foreach (Transform _child in trainObject.transform)
+            if (trainObject.Id != string.Empty)
             {
-                Destroy(_child.gameObject);
+                Train.Train _savedTrain = createdTrains.Find(_train => _train.Id == trainObject.Id);
+
+                string _path = AssetDatabase.GetAssetPath(_savedTrain);
+                AssetDatabase.DeleteAsset(_path);
+                AssetDatabase.Refresh();
+
+                createdTrains.Remove(_savedTrain);
+                TrainDeleted?.Invoke(_savedTrain);
             }
 
-            if (trainObject.Id == string.Empty)
+            Texture2D _snapshot = GetTrainSnapshot(trainObject.Id);
+            if (_snapshot != null)
             {
-                return;
+                string _path = AssetDatabase.GetAssetPath(_snapshot);
+                AssetDatabase.DeleteAsset(_path);
+                AssetDatabase.Refresh();
             }
 
-            //TODO: this wqon't work, change
-            string _path = AssetDatabase.GetAssetPath(trainObject);
-            AssetDatabase.DeleteAsset(_path);
-            AssetDatabase.Refresh();
+            ResetEditor();
+        }
+
+        public Texture2D GetTrainSnapshot(string _trainId)
+        {
+            return snapshots.Find(_snapshot => _snapshot.name == _trainId);
+        }
+
+        private void CreateNewTrain()
+        {
+            trainObject = new GameObject(DEFAULT_TRAIN_OBJECT_NAME).AddComponent<Train.Train>();
+            trainObject.transform.SetParent(trainObjectParent);
         }
 
         private void LoadTrainParts()
@@ -100,6 +151,31 @@ namespace TrainConstructor.TrainEditor
                 string _path = AssetDatabase.GUIDToAssetPath(_asset);
                 TrainPartSO _loadedAsset = AssetDatabase.LoadAssetAtPath<TrainPartSO>(_path);
                 trainParts.Add(_loadedAsset);
+            }
+        }
+
+        private void LoadCreatedTrains()
+        {
+            createdTrains.Clear();
+            string[] _files = Directory.GetFiles(Paths.CREATED_TRAINS_PATH, "*.prefab", SearchOption.TopDirectoryOnly);
+            foreach (string _file in _files)
+            {
+                GameObject _trainPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(_file);
+                Train.Train _train = _trainPrefab.GetComponent<Train.Train>();
+                createdTrains.Add(_train);
+            }
+
+            CreatedTrainsLoaded?.Invoke(createdTrains);
+        }
+
+        private void LoadSnapshots()
+        {
+            snapshots.Clear();
+            string[] files = Directory.GetFiles(Paths.SNAPSHOTS_PATH, "*.png", SearchOption.TopDirectoryOnly);
+            foreach (string _file in files)
+            {
+                Texture2D _snapshot = AssetDatabase.LoadAssetAtPath<Texture2D>(_file);
+                snapshots.Add(_snapshot);
             }
         }
 
@@ -160,12 +236,19 @@ namespace TrainConstructor.TrainEditor
             SideUIObject.SetActive(false);
 
             yield return new WaitForEndOfFrame();
-            string _path = $"{Application.dataPath}/{Paths.SNAPSHOTS_PATH}/snapshot.png";
+            string _path = $"{Directory.GetCurrentDirectory()}/{Paths.SNAPSHOTS_PATH}/{trainObject.Id}.png";
             ScreenCapture.CaptureScreenshot(_path);
+            yield return new WaitForSeconds(0.5f);
+            AssetDatabase.Refresh();
+
             Debug.Log("Snapshot saved to " + _path);
 
             toolsView.gameObject.SetActive(true);
             SideUIObject.SetActive(true);
+
+            LoadSnapshots();
+            SnapshotUpdated?.Invoke(trainObject, GetTrainSnapshot(trainObject.Id));
         }
+
     }
 }

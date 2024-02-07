@@ -8,12 +8,14 @@ namespace TrainConstructor.TrainEditor
     {
         [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private BoxCollider2D boxCollider2D;
+        [SerializeField, HideInInspector] private TrainPartSO trainPartSO;
 
         private const float OFFSET = 0.0001f;
 
         public Action<TrainPart> PartPutDown;
 
-        private TrainPartSO trainPartSO;
+        public TrainPartSO TrainPartSO => trainPartSO;
+
         private int order;
 
         private bool isDragging;
@@ -60,6 +62,11 @@ namespace TrainConstructor.TrainEditor
             Vector3 _position = transform.position;
             _position.z -= _offsetMultiplier * OFFSET;
             transform.position = _position;
+        }
+
+        public void SetOrder(int _order)
+        {
+            order = _order;
         }
 
         private void OnMouseUp()
