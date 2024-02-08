@@ -1,0 +1,19 @@
+{
+    "name": "TrainConstructor.TrainSelection",
+    "rootNamespace": "",
+    "references": [
+        "GUID:002d1e1ab687b19449eba5f36ce57177",
+        "GUID:558bb398c279f62438c7acceae106c3b",
+        "GUID:ce05c7287780af14eb223896e0f9ff6a",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

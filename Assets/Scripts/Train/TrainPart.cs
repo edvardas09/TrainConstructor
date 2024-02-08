@@ -1,8 +1,7 @@
 using System;
-using TrainConstructor.Train;
 using UnityEngine;
 
-namespace TrainConstructor.TrainEditor
+namespace TrainConstructor.Train
 {
     public class TrainPart : MonoBehaviour
     {
