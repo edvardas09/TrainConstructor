@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace TrainConstructor.ReusableComponents
+namespace TrainConstructor.UI
 {
     [RequireComponent(typeof(CanvasGroup))]
     public class ConfirmationPanel : MonoBehaviour

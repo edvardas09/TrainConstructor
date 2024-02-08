@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using TrainConstructor.ReusableComponents;
+using TrainConstructor.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
