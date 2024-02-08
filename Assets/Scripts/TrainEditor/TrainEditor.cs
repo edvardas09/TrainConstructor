@@ -16,8 +16,7 @@ namespace TrainConstructor.TrainEditor
 
         [Header("UI References")]
         [SerializeField] private DeletePartObject deletePartObject;
-        [SerializeField] private ToolsView toolsView;
-        [SerializeField] private GameObject SideUIObject;
+        [SerializeField] private GameObject canvasObject;
 
         [Header("Train part selection references")]
         [SerializeField] private TrainPartSelection trainPartSelectionPrefab;
@@ -108,7 +107,7 @@ namespace TrainConstructor.TrainEditor
 
         public void DeleteTrain()
         {
-            if (trainObject.Id != string.Empty)
+            if (!string.IsNullOrWhiteSpace(trainObject.Id))
             {
                 Train.Train _savedTrain = createdTrains.Find(_train => _train.Id == trainObject.Id);
 
@@ -232,8 +231,7 @@ namespace TrainConstructor.TrainEditor
 
         private IEnumerator CaptureScreenshot()
         {
-            toolsView.gameObject.SetActive(false);
-            SideUIObject.SetActive(false);
+            canvasObject.SetActive(false);
 
             yield return new WaitForEndOfFrame();
             string _path = $"{Directory.GetCurrentDirectory()}/{Paths.SNAPSHOTS_PATH}/{trainObject.Id}.png";
@@ -243,8 +241,7 @@ namespace TrainConstructor.TrainEditor
 
             Debug.Log("Snapshot saved to " + _path);
 
-            toolsView.gameObject.SetActive(true);
-            SideUIObject.SetActive(true);
+            canvasObject.SetActive(true);
 
             LoadSnapshots();
             SnapshotUpdated?.Invoke(trainObject, GetTrainSnapshot(trainObject.Id));

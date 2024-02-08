@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace TrainConstructor.TrainEditor
 {
-    public class TrainSettingsCanvas : MonoBehaviour
+    public class TrainSettings : MonoBehaviour
     {
         [SerializeField] private TrainEditor trainEditor;
 
@@ -110,6 +110,8 @@ namespace TrainConstructor.TrainEditor
 
         private void TakeSnapshot()
         {
+            SaveTrain();
+
             if (string.IsNullOrEmpty(trainEditor.TrainObject.Id))
             {
                 warningText.text = TRAIN_NOT_SAVED_WARNING_TEXT;
