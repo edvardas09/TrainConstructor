@@ -1,3 +1,16 @@
 {
-	"name": "TrainConstructor.Train"
+    "name": "TrainConstructor.Train",
+    "rootNamespace": "",
+    "references": [
+        "GUID:002d1e1ab687b19449eba5f36ce57177"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using TrainConstructor.Train;
 using TrainConstructor.UI;
 using UnityEngine;
 using UnityEngine.UI;
@@ -134,7 +135,7 @@ namespace TrainConstructor.TrainEditor
                 return;
             }
 
-            if (trainEditor.CreatedTrains.Any(_train => _train.Id == _trainId) &&
+            if (TrainDataManager.Instance.CreatedTrains.Any(_train => _train.Id == _trainId) &&
                 trainEditor.TrainObject.Id != _trainId)
             {
                 warningText.text = TRAIN_ID_EXISTS_WARNING_TEXT;
@@ -147,7 +148,7 @@ namespace TrainConstructor.TrainEditor
         private void OnTrainAdded(Train.Train _train)
         {
             CreatedTrainButton _createdTrainButton = Instantiate(createdTrainButtonPrefab, createdTrainsParentTransform);
-            Texture2D _snapshot = trainEditor.GetTrainSnapshot(_train.Id);
+            Texture2D _snapshot = TrainDataManager.Instance.GetTrainSnapshot(_train.Id);
             _createdTrainButton.Setup(_train, _snapshot);
             Button _button = _createdTrainButton.GetComponent<Button>();
             _button.onClick.AddListener(() => ShowTrainLoadConfirmationPanel(_train));

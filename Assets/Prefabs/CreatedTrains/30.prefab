@@ -296,4 +296,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 30
-  isLockedWithAnAd: 1
+  isLockedWithAnAd: 0

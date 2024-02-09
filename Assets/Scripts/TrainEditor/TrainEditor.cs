@@ -34,16 +34,12 @@ namespace TrainConstructor.TrainEditor
         public Action<Train.Train> TrainDeleted;
         public Action<Train.Train, Texture2D> SnapshotUpdated;
 
-        public List<Train.Train> CreatedTrains => createdTrains;
         public Train.Train TrainObject => trainObject;
-
-
-        private Train.Train trainObject;
 
         private List<TrainPartSO> trainParts = new List<TrainPartSO>();
         private List<Train.Train> createdTrains = new List<Train.Train>();
-        private List<Texture2D> snapshots = new List<Texture2D>();
 
+        private Train.Train trainObject;
         private int offsetMultiplier;
         private bool isOverDeleteObject;
 
@@ -51,9 +47,11 @@ namespace TrainConstructor.TrainEditor
         {
             deletePartObject.MouseOverStateChanged += OnDeleteStateChanged;
 
-            LoadSnapshots();
-            LoadCreatedTrains();
-            LoadTrainParts();
+            TrainDataManager.Instance.LoadSnapshots();
+            createdTrains = TrainDataManager.Instance.LoadCreatedTrains();
+            trainParts = TrainDataManager.Instance.LoadTrainParts();
+
+            CreatedTrainsLoaded?.Invoke(TrainDataManager.Instance.CreatedTrains);
 
             ValidateParts();
 
@@ -119,7 +117,7 @@ namespace TrainConstructor.TrainEditor
                 TrainDeleted?.Invoke(_savedTrain);
             }
 
-            Texture2D _snapshot = GetTrainSnapshot(trainObject.Id);
+            Texture2D _snapshot = TrainDataManager.Instance.GetTrainSnapshot(trainObject.Id);
             if (_snapshot != null)
             {
                 string _path = AssetDatabase.GetAssetPath(_snapshot);
@@ -130,52 +128,10 @@ namespace TrainConstructor.TrainEditor
             ResetEditor();
         }
 
-        public Texture2D GetTrainSnapshot(string _trainId)
-        {
-            return snapshots.Find(_snapshot => _snapshot.name == _trainId);
-        }
-
         private void CreateNewTrain()
         {
             trainObject = new GameObject(DEFAULT_TRAIN_OBJECT_NAME).AddComponent<Train.Train>();
             trainObject.transform.SetParent(trainObjectParent);
-        }
-
-        private void LoadTrainParts()
-        {
-            trainParts.Clear();
-            string[] _assets = AssetDatabase.FindAssets("t:" + typeof(TrainPartSO).Name);
-            foreach (string _asset in _assets)
-            {
-                string _path = AssetDatabase.GUIDToAssetPath(_asset);
-                TrainPartSO _loadedAsset = AssetDatabase.LoadAssetAtPath<TrainPartSO>(_path);
-                trainParts.Add(_loadedAsset);
-            }
-        }
-
-        private void LoadCreatedTrains()
-        {
-            createdTrains.Clear();
-            string[] _files = Directory.GetFiles(Paths.CREATED_TRAINS_PATH, "*.prefab", SearchOption.TopDirectoryOnly);
-            foreach (string _file in _files)
-            {
-                GameObject _trainPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(_file);
-                Train.Train _train = _trainPrefab.GetComponent<Train.Train>();
-                createdTrains.Add(_train);
-            }
-
-            CreatedTrainsLoaded?.Invoke(createdTrains);
-        }
-
-        private void LoadSnapshots()
-        {
-            snapshots.Clear();
-            string[] files = Directory.GetFiles(Paths.SNAPSHOTS_PATH, "*.png", SearchOption.TopDirectoryOnly);
-            foreach (string _file in files)
-            {
-                Texture2D _snapshot = AssetDatabase.LoadAssetAtPath<Texture2D>(_file);
-                snapshots.Add(_snapshot);
-            }
         }
 
         private void ValidateParts()
@@ -243,8 +199,8 @@ namespace TrainConstructor.TrainEditor
 
             canvasObject.SetActive(true);
 
-            LoadSnapshots();
-            SnapshotUpdated?.Invoke(trainObject, GetTrainSnapshot(trainObject.Id));
+            TrainDataManager.Instance.LoadSnapshots();
+            SnapshotUpdated?.Invoke(trainObject, TrainDataManager.Instance.GetTrainSnapshot(trainObject.Id));
         }
 
     }
