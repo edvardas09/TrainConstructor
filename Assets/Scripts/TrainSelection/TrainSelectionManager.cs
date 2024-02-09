@@ -8,13 +8,13 @@ namespace TrainConstructor.TrainSelection
     {
         [SerializeField] private TrainSelection trainSelectionPrefab;
         [SerializeField] private Transform trainSelectionParent;
+        [SerializeField] private AdRewardCanvas adRewardCanvas;
 
-        private List<Texture2D> snapshots = new List<Texture2D>();
         private List<Train.Train> trains = new List<Train.Train>();
 
         private void Awake()
         {
-            snapshots = TrainDataManager.Instance.LoadSnapshots();
+            TrainDataManager.Instance.LoadSnapshots();
             trains = TrainDataManager.Instance.LoadCreatedTrains();
 
             SpawnTrainSelections();
@@ -25,7 +25,8 @@ namespace TrainConstructor.TrainSelection
             foreach (Train.Train _train in trains)
             {
                 TrainSelection _trainSelection = Instantiate(trainSelectionPrefab, trainSelectionParent);
-                _trainSelection.Setup(_train, TrainDataManager.Instance.GetTrainSnapshot(_train.Id));
+                Texture2D _snapshot = TrainDataManager.Instance.GetTrainSnapshot(_train.Id);
+                _trainSelection.Setup(_train, _snapshot, adRewardCanvas);
             }
         }
     }

@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using TrainConstructor.Train;
 using UnityEngine;
@@ -13,10 +14,13 @@ namespace TrainConstructor.TrainSelection
         [SerializeField] private Button adButton;
 
         private Train.Train train;
+        private AdRewardCanvas adRewardCanvas;
 
-        public void Setup(Train.Train _train, Texture2D _snapshot)
+        public void Setup(Train.Train _train, Texture2D _snapshot, AdRewardCanvas _adRewardCanvas)
         {
             train = _train;
+            adRewardCanvas = _adRewardCanvas;
+
             trainId.text = _train.Id;
             trainButton.onClick.AddListener(TrainSelected);
 
@@ -40,7 +44,19 @@ namespace TrainConstructor.TrainSelection
 
         private void UnlockTrainWithAd()
         {
+            adRewardCanvas.AdFinished += OnAdFinished;
+            adRewardCanvas.ShowAd();
+        }
 
+        private void OnAdFinished(bool _isEndReached)
+        {
+            adRewardCanvas.AdFinished -= OnAdFinished;
+
+            if (_isEndReached)
+            {
+                TrainDataManager.Instance.SetSelectedTrain(train);
+                adButton.gameObject.SetActive(false);
+            }
         }
     }
 }
