@@ -4,5 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/TrainSelection.unity
+    guid: 2ab3af160f5cada4fb2d9cd750b4d391
+  - enabled: 1
+    path: Assets/Scenes/Gameplay.unity
+    guid: a9f114ac38eecb140bae1240e601b59f
   m_configObjects: {}

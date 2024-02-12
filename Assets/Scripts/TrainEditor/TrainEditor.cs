@@ -69,8 +69,9 @@ namespace TrainConstructor.TrainEditor
             {
                 TrainPart _trainPart = _child.GetComponent<TrainPart>();
                 int _order = trainPartsOrder.FindIndex(_partOrder => _partOrder.Type == _trainPart.TrainPartSO.Type && _partOrder.SubType == _trainPart.TrainPartSO.SubType);
-                _trainPart.SetOrder(_order);
-                _trainPart.PartPutDown += OnPartPutDown;
+                DraggablePart _trainPartComponent = _child.GetComponent<DraggablePart>();
+                _trainPartComponent.SetOrder(_order);
+                _trainPartComponent.PartPutDown += OnPartPutDown;
             }
         }
 
@@ -164,8 +165,10 @@ namespace TrainConstructor.TrainEditor
         {
             TrainPart _trainPart = Instantiate(trainPartPrefab, trainObject.transform);
             int _order = trainPartsOrder.FindIndex(_partOrder => _partOrder.Type == _trainPartSO.Type && _partOrder.SubType == _trainPartSO.SubType);
-            _trainPart.Setup(_trainPartSO, _order);
-            _trainPart.PartPutDown += OnPartPutDown;
+            DraggablePart _trainPartComponent = _trainPart.GetComponent<DraggablePart>();
+            _trainPart.Setup(_trainPartSO);
+            _trainPartComponent.Setup(_trainPart, _order);
+            _trainPartComponent.PartPutDown += OnPartPutDown;
         }
 
         private void OnPartPutDown(TrainPart _trainPart)
@@ -177,7 +180,8 @@ namespace TrainConstructor.TrainEditor
             }
 
             offsetMultiplier++;
-            _trainPart.OffsetPart(offsetMultiplier);
+            DraggablePart _trainPartComponent = _trainPart.GetComponent<DraggablePart>();
+            _trainPartComponent.OffsetPart(offsetMultiplier);
         }
 
         private void OnDeleteStateChanged()

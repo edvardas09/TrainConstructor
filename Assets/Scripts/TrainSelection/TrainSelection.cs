@@ -1,7 +1,8 @@
-using System;
 using TMPro;
+using TrainConstructor.Shared;
 using TrainConstructor.Train;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace TrainConstructor.TrainSelection
@@ -40,6 +41,7 @@ namespace TrainConstructor.TrainSelection
         private void TrainSelected()
         {
             TrainDataManager.Instance.SetSelectedTrain(train);
+            SceneManager.LoadScene(Scenes.Gameplay.ToString());
         }
 
         private void UnlockTrainWithAd()
@@ -54,8 +56,7 @@ namespace TrainConstructor.TrainSelection
 
             if (_isEndReached)
             {
-                TrainDataManager.Instance.SetSelectedTrain(train);
-                adButton.gameObject.SetActive(false);
+                TrainSelected();
             }
         }
     }

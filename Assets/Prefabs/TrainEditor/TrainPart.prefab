@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1853750597538017699}
   - component: {fileID: 1290886635548880799}
   - component: {fileID: 7682238786984073568}
+  - component: {fileID: 360900851869636760}
   m_Layer: 0
   m_Name: TrainPart
   m_TagString: Untagged
@@ -124,3 +125,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 1853750597538017699}
   boxCollider2D: {fileID: 1290886635548880799}
+  trainPartSO: {fileID: 0}
+--- !u!114 &360900851869636760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4308022147934594529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3f8b19abb0f6b54fae73aba5db5d5cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

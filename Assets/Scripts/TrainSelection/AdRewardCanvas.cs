@@ -40,22 +40,24 @@ namespace TrainConstructor.TrainSelection
         private void EndReached(VideoPlayer _source)
         {
             _source.Stop();
-            AdFinished?.Invoke(true);
-            Hide();
+            Hide(true);
         }
 
         private void CancelAd()
         {
             videoPlayer.Stop();
-            AdFinished?.Invoke(false);
-            Hide();
+            Hide(false);
         }
 
-        private void Hide()
+        private void Hide(bool isEndReached)
         {
             LeanTween.cancel(canvasGroup.gameObject);
             LeanTween.alphaCanvas(canvasGroup, 0, fadeDuration)
-                .setOnComplete(() => adRewardCanvas.SetActive(false));
+                .setOnComplete(() =>
+                {
+                    adRewardCanvas.SetActive(false);
+                    AdFinished?.Invoke(isEndReached);
+                });
         }
     }
 }
