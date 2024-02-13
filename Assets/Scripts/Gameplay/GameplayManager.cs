@@ -34,7 +34,7 @@ namespace TrainConstructor.Gameplay
             Train.Train _selectedTrain = TrainDataManager.Instance.SelectedTrain;
             if (_selectedTrain == null)
             {
-                Debug.LogError("No train selected, opening train selection scene");
+                Debug.LogWarning("No train selected, opening train selection scene");
                 SceneManager.LoadScene(Scenes.TrainSelection.ToString());
                 return;
             }
