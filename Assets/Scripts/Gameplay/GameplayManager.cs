@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TrainConstructor.Shared;
@@ -12,6 +13,7 @@ namespace TrainConstructor.Gameplay
         [SerializeField] private int maxTrainParts = 5;
         [SerializeField] private GameObject trainPartOptionPrefab;
         [SerializeField] private Transform trainPartOptionsParent;
+        [SerializeField] private ParticleSystem levelFinishedParticles;
 
         private Train.Train spawnedTrain;
         private List<TrainPart> trainParts = new List<TrainPart>();
@@ -129,7 +131,7 @@ namespace TrainConstructor.Gameplay
 
                 if (spawnedPartOptions.Count == 0)
                 {
-                    LevelFinished();
+                    StartCoroutine(LevelFinished());
                 }
 
                 return;
@@ -161,9 +163,11 @@ namespace TrainConstructor.Gameplay
             return trainParts.FindAll(x => x.TrainPartSO.Type == _trainPartSO.Type && x.TrainPartSO.SubType == _trainPartSO.SubType);
         }
 
-        private void LevelFinished()
+        private IEnumerator LevelFinished()
         {
-            Debug.Log("Level finished");
+            levelFinishedParticles.Play();
+            yield return new WaitForSeconds(3);
+            SceneManager.LoadScene(Scenes.TrainSelection.ToString());
         }
     }
 }
