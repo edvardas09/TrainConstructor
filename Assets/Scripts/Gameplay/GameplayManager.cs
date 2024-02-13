@@ -10,13 +10,13 @@ namespace TrainConstructor.Gameplay
     public class GameplayManager : MonoBehaviour
     {
         [SerializeField] private int maxTrainParts = 5;
-        [SerializeField] private GameObject trainPartSelectionPrefab;
-        [SerializeField] private Transform trainPartSelectionsParent;
-        [SerializeField] private TrainPartOption TrainPartOption;
+        [SerializeField] private GameObject trainPartOptionPrefab;
+        [SerializeField] private Transform trainPartOptionsParent;
 
         private Train.Train spawnedTrain;
         private List<TrainPart> trainParts = new List<TrainPart>();
         private List<TrainPart> availablePartSelections = new List<TrainPart>();
+        private List<GameObject> spawnedPartOptions = new List<GameObject>();
 
         private Vector3 partScale;
 
@@ -52,6 +52,7 @@ namespace TrainConstructor.Gameplay
             {
                 Destroy(_part.GetComponent<DraggablePart>());
                 _part.ShowOutlineTexture();
+                _part.GetComponent<Collider2D>().enabled = false;
             }
 
             //fit loaded train to the screen
@@ -73,25 +74,96 @@ namespace TrainConstructor.Gameplay
             spawnedTrain.transform.position = _newPosition;
 
             partScale = trainParts[0].transform.localScale * _scale;
-            
-            TrainPartOption.Setup(trainParts[0].TrainPartSO, partScale);
         }
 
         private void SpawnInitialPartSelections()
         {
+            if (availablePartSelections.Count == 0)
+            {
+                return;
+            }
+
             for (int i = 0; i < maxTrainParts; i++)
             {
                 TrainPart _part = availablePartSelections[Random.Range(0, availablePartSelections.Count)];
                 availablePartSelections.Remove(_part);
-                //TrainPartSelection _partSelection = Instantiate(trainPartSelectionPrefab, trainPartSelectionsParent);
-                //_partSelection.Setup(_part.TrainPartSO);
-                //_partSelection.TrainPartSelected += OnTrainPartSelected;
+                GameObject _partSelectionObject = Instantiate(trainPartOptionPrefab, trainPartOptionsParent);
+                TrainPartOption _partSelection = _partSelectionObject.GetComponentInChildren<TrainPartOption>();
+                _partSelection.Setup(_part.TrainPartSO, partScale);
+                _partSelection.OnTrainPartSelected += OnTrainPartSelected;
+                _partSelection.OnTrainPartReleased += OnTrainPartReleased;
+
+                spawnedPartOptions.Add(_partSelectionObject);
             }
         }
 
-        private void OnTrainPartSelected(TrainPartSO sO)
+        private void OnTrainPartReleased(TrainPartOption _trainPartOption)
         {
-            throw new System.NotImplementedException();
+            RaycastHit2D _hit = Physics2D.Raycast(_trainPartOption.transform.position, Vector2.zero);
+
+            List<TrainPart> _trainPartsOfType = GetPartsOfType(_trainPartOption.TrainPartSO);
+            foreach (TrainPart _part in _trainPartsOfType)
+            {
+                _part.GetComponent<Collider2D>().enabled = false;
+            }
+
+            if (_hit.collider == null)
+            {
+                return;
+            }
+
+            TrainPart _trainPart = _hit.collider.GetComponent<TrainPart>();
+            if (_trainPart == null)
+            {
+                return;
+            }
+
+            _trainPart.ShowMainTexture();
+            _trainPart.GetComponent<Collider2D>().enabled = false;
+            trainParts.Remove(_trainPart);
+
+            if (availablePartSelections.Count == 0)
+            {
+                spawnedPartOptions.Remove(_trainPartOption.transform.parent.gameObject);
+                Destroy(_trainPartOption.transform.parent.gameObject);
+
+                if (spawnedPartOptions.Count == 0)
+                {
+                    LevelFinished();
+                }
+
+                return;
+            }
+
+            _trainPartOption.gameObject.SetActive(false);
+            TrainPart _nextPart = availablePartSelections[Random.Range(0, availablePartSelections.Count)];
+            _trainPartOption.Setup(_nextPart.TrainPartSO, partScale);
+            availablePartSelections.Remove(_nextPart);
+        }
+
+        private void OnTrainPartSelected(TrainPartOption _trainPartOption)
+        {
+            List<TrainPart> _trainPartsOfType = GetPartsOfType(_trainPartOption.TrainPartSO);
+            if (_trainPartsOfType.Count == 0)
+            {
+                Debug.LogError($"No parts of type {_trainPartOption.TrainPartSO.Type} and subtype {_trainPartOption.TrainPartSO.SubType} found in the train");
+                return;
+            }
+
+            foreach (TrainPart _part in _trainPartsOfType)
+            {
+                _part.GetComponent<Collider2D>().enabled = true;
+            }
+        }
+
+        private List<TrainPart> GetPartsOfType(TrainPartSO _trainPartSO)
+        {
+            return trainParts.FindAll(x => x.TrainPartSO.Type == _trainPartSO.Type && x.TrainPartSO.SubType == _trainPartSO.SubType);
+        }
+
+        private void LevelFinished()
+        {
+            Debug.Log("Level finished");
         }
     }
 }
