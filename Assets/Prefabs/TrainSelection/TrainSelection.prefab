@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 8664103510833418452}
   - component: {fileID: 8664103510833418453}
   m_Layer: 5
-  m_Name: AddButton
+  m_Name: AdButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -648,6 +648,7 @@ MonoBehaviour:
   trainId: {fileID: 8664103510999420705}
   trainButton: {fileID: 8664103511925873466}
   adButton: {fileID: 8664103510833418453}
+  isRandom: 0
 --- !u!1 &8664103512061766564
 GameObject:
   m_ObjectHideFlags: 0

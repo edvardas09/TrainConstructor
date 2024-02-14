@@ -52,6 +52,11 @@ namespace TrainConstructor.Gameplay
             availablePartSelections.AddRange(trainParts);
             foreach (TrainPart _part in trainParts)
             {
+                if (TrainDataManager.Instance.IsRandom)
+                {
+                    _part.Randomize();
+                }
+
                 Destroy(_part.GetComponent<DraggablePart>());
                 _part.ShowOutlineTexture();
                 _part.GetComponent<Collider2D>().enabled = false;

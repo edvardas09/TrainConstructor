@@ -13,9 +13,20 @@ namespace TrainConstructor.TrainSelection
         [SerializeField] private TextMeshProUGUI trainId;
         [SerializeField] private Button trainButton;
         [SerializeField] private Button adButton;
+        [SerializeField] private bool isRandom;
 
         private Train.Train train;
         private AdRewardCanvas adRewardCanvas;
+
+        private void OnEnable()
+        {
+            trainButton.onClick.AddListener(TrainSelected);
+        }
+
+        private void OnDisable()
+        {
+            trainButton.onClick.RemoveListener(TrainSelected);
+        }
 
         public void Setup(Train.Train _train, Texture2D _snapshot, AdRewardCanvas _adRewardCanvas)
         {
@@ -23,7 +34,6 @@ namespace TrainConstructor.TrainSelection
             adRewardCanvas = _adRewardCanvas;
 
             trainId.text = _train.Id;
-            trainButton.onClick.AddListener(TrainSelected);
 
             adButton.gameObject.SetActive(_train.IsLockedWithAnAd);
             adButton.onClick.AddListener(UnlockTrainWithAd);
@@ -40,7 +50,15 @@ namespace TrainConstructor.TrainSelection
 
         private void TrainSelected()
         {
-            TrainDataManager.Instance.SetSelectedTrain(train);
+            if (isRandom)
+            {
+                TrainDataManager.Instance.SetRandomTrain();
+            }
+            else
+            {
+                TrainDataManager.Instance.SetSelectedTrain(train);
+            }
+
             SceneManager.LoadScene(Scenes.Gameplay.ToString());
         }
 

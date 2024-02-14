@@ -10,7 +10,9 @@ namespace TrainConstructor.Train
         public List<TrainPartSO> TrainParts => trainParts;
         public List<Train> CreatedTrains => createdTrains;
         public List<Texture2D> Snapshots => snapshots;
+
         public Train SelectedTrain => selectedTrain;
+        public bool IsRandom => isRandom;
 
 
         private List<TrainPartSO> trainParts = new List<TrainPartSO>();
@@ -18,10 +20,18 @@ namespace TrainConstructor.Train
         private List<Texture2D> snapshots = new List<Texture2D>();
 
         private Train selectedTrain;
+        private bool isRandom;
 
         public void SetSelectedTrain(Train _train)
         {
+            isRandom = false;
             selectedTrain = _train;
+        }
+
+        public void SetRandomTrain()
+        {
+            isRandom = true;
+            selectedTrain = createdTrains[Random.Range(0, createdTrains.Count)];
         }
 
         public List<TrainPartSO> LoadTrainParts()

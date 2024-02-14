@@ -15,6 +15,7 @@ namespace TrainConstructor.TrainSelection
         private void Awake()
         {
             TrainDataManager.Instance.LoadSnapshots();
+            TrainDataManager.Instance.LoadTrainParts();
             trains = TrainDataManager.Instance.LoadCreatedTrains();
 
             SpawnTrainSelections();
@@ -25,6 +26,7 @@ namespace TrainConstructor.TrainSelection
             foreach (Train.Train _train in trains)
             {
                 TrainSelection _trainSelection = Instantiate(trainSelectionPrefab, trainSelectionParent);
+                _trainSelection.transform.SetAsFirstSibling();
                 Texture2D _snapshot = TrainDataManager.Instance.GetTrainSnapshot(_train.Id);
                 _trainSelection.Setup(_train, _snapshot, adRewardCanvas);
             }

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace TrainConstructor.Train
@@ -19,6 +21,25 @@ namespace TrainConstructor.Train
             boxCollider2D.size = _trainPartSO.MainTexture.bounds.size;
 
             boxCollider2D.enabled = false;
+        }
+
+        public void Randomize()
+        {
+            if (trainPartSO == null)
+            {
+                Debug.LogError("No train part SO assigned");
+                return;
+            }
+
+            List<TrainPartSO> _availableParts = TrainDataManager.Instance.TrainParts.Where(x => x.Type == trainPartSO.Type).ToList();
+            if (_availableParts.Count == 0)
+            {
+                Debug.LogError("No available parts found");
+                return;
+            }
+
+            TrainPartSO _randomPart = _availableParts[Random.Range(0, _availableParts.Count)];
+            Setup(_randomPart);
         }
 
         public void ShowOutlineTexture()
