@@ -36,7 +36,12 @@ namespace TrainConstructor.TrainSelection
             trainId.text = _train.Id;
 
             adButton.gameObject.SetActive(_train.IsLockedWithAnAd);
-            adButton.onClick.AddListener(UnlockTrainWithAd);
+
+            if (_train.IsLockedWithAnAd)
+            {
+                adButton.onClick.AddListener(UnlockTrainWithAd);
+                trainButton.onClick.RemoveListener(TrainSelected);
+            }
 
             if (_snapshot == null)
             {
