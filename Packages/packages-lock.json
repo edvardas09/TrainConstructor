@@ -1,10 +1,50 @@
 {
   "dependencies": {
-    "com.unity.2d.sprite": {
-      "version": "1.0.0",
+    "com.coffee.softmask-for-ugui": {
+      "version": "1.0.2",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://verdaccio.tutotoons.com"
+    },
+    "com.tutotoons.base": {
+      "version": "2.0.21",
       "depth": 0,
-      "source": "builtin",
-      "dependencies": {}
+      "source": "registry",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.0.2",
+        "com.unity.textmeshpro": "3.0.6"
+      },
+      "url": "https://verdaccio.tutotoons.com"
+    },
+    "com.tutotoons.leantween": {
+      "version": "2.0.1",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://verdaccio.tutotoons.com"
+    },
+    "com.tutotoons.purchasing": {
+      "version": "2.0.1",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.purchasing": "4.9.4",
+        "com.tutotoons.base": "2.0.10"
+      },
+      "url": "https://verdaccio.tutotoons.com"
+    },
+    "com.tutotoons.subscription": {
+      "version": "2.0.7",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.tutotoons.base": "2.0.10",
+        "com.tutotoons.purchasing": "2.0.0",
+        "com.tutotoons.leantween": "2.0.1",
+        "com.coffee.softmask-for-ugui": "1.0.2"
+      },
+      "url": "https://verdaccio.tutotoons.com"
     },
     "com.unity.collab-proxy": {
       "version": "1.5.7",
@@ -48,10 +88,35 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.nuget.newtonsoft-json": {
-      "version": "2.0.0",
+      "version": "3.0.2",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.purchasing": {
+      "version": "4.9.4",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.ugui": "1.0.0",
+        "com.unity.modules.unityanalytics": "1.0.0",
+        "com.unity.modules.unitywebrequest": "1.0.0",
+        "com.unity.modules.jsonserialize": "1.0.0",
+        "com.unity.modules.androidjni": "1.0.0",
+        "com.unity.services.core": "1.8.1"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.services.core": {
+      "version": "1.8.1",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.unitywebrequest": "1.0.0",
+        "com.unity.nuget.newtonsoft-json": "3.0.2",
+        "com.unity.modules.androidjni": "1.0.0"
+      },
       "url": "https://packages.unity.com"
     },
     "com.unity.test-framework": {
@@ -66,7 +131,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.textmeshpro": {
-      "version": "3.0.7",
+      "version": "3.0.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -94,13 +159,6 @@
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0"
       }
-    },
-    "com.unity.ui.builder": {
-      "version": "1.0.0-preview.18",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://packages.unity.com"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
