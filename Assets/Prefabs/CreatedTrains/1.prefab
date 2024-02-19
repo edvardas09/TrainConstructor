@@ -1017,4 +1017,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 1
-  isLockedWithAnAd: 0
+  isLockedWithAnAd: 1

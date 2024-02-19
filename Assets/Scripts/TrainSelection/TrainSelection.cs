@@ -1,9 +1,12 @@
+using System;
 using TMPro;
 using TrainConstructor.Shared;
 using TrainConstructor.Train;
+using TutoTOONS;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEditor.FilePathAttribute;
 
 namespace TrainConstructor.TrainSelection
 {
@@ -69,15 +72,13 @@ namespace TrainConstructor.TrainSelection
 
         private void UnlockTrainWithAd()
         {
-            adRewardCanvas.AdFinished += OnAdFinished;
-            adRewardCanvas.ShowAd();
+            TestAdsController.instance.SetCloseCallback(OnAdFinished);
+            TestAdsController.instance.ShowAd("Rewarded", "WATCH_AD_BUTTON");
         }
 
-        private void OnAdFinished(bool _isEndReached)
+        private void OnAdFinished(bool _success)
         {
-            adRewardCanvas.AdFinished -= OnAdFinished;
-
-            if (_isEndReached)
+            if (_success)
             {
                 TrainSelected();
             }
