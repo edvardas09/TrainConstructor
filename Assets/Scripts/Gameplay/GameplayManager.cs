@@ -5,12 +5,14 @@ using TrainConstructor.Shared;
 using TrainConstructor.Train;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace TrainConstructor.Gameplay
 {
     public class GameplayManager : MonoBehaviour
     {
         [SerializeField] private int maxTrainParts = 5;
+        [SerializeField] private Button backButton;
         [SerializeField] private GameObject trainPartOptionPrefab;
         [SerializeField] private Transform trainPartOptionsParent;
         [SerializeField] private ParticleSystem levelFinishedParticles;
@@ -22,6 +24,16 @@ namespace TrainConstructor.Gameplay
         private readonly List<GameObject> spawnedPartOptions = new List<GameObject>();
 
         private Vector3 partScale;
+
+        private void OnEnable()
+        {
+            backButton.onClick.AddListener(LoadTrainSelectionScene);
+        }
+
+        private void OnDisable()
+        {
+            backButton.onClick.RemoveListener(LoadTrainSelectionScene);
+        }
 
         private void Start()
         {
@@ -183,6 +195,11 @@ namespace TrainConstructor.Gameplay
             partPlacedParticles.transform.localScale = _partTransform.localScale;
             partPlacedParticles.transform.position = _partTransform.position;
             partPlacedParticles.Play();
+        }
+
+        private void LoadTrainSelectionScene()
+        {
+            SceneManager.LoadScene(Scenes.TrainSelection.ToString());
         }
     }
 }
