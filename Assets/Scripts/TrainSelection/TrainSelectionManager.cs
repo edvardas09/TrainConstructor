@@ -8,7 +8,6 @@ namespace TrainConstructor.TrainSelection
     {
         [SerializeField] private TrainSelection trainSelectionPrefab;
         [SerializeField] private Transform trainSelectionParent;
-        [SerializeField] private AdRewardCanvas adRewardCanvas;
 
         private List<Train.Train> trains = new List<Train.Train>();
 
@@ -28,7 +27,7 @@ namespace TrainConstructor.TrainSelection
                 TrainSelection _trainSelection = Instantiate(trainSelectionPrefab, trainSelectionParent);
                 _trainSelection.transform.SetAsFirstSibling();
                 Texture2D _snapshot = TrainDataManager.Instance.GetTrainSnapshot(_train.Id);
-                _trainSelection.Setup(_train, _snapshot, adRewardCanvas);
+                _trainSelection.Setup(_train, _snapshot);
             }
         }
     }

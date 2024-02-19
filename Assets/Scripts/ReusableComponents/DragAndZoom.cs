@@ -6,6 +6,7 @@ namespace TrainConstructor.ReusableComponents
     {
         [SerializeField] private float minScale = 0.5f;
         [SerializeField] private float maxScale = 2f;
+        [SerializeField] private float scaleSpeed = 0.1f;
 
         private Vector3 offsetFromCenter;
 
@@ -26,7 +27,7 @@ namespace TrainConstructor.ReusableComponents
         {
             if (Input.mouseScrollDelta.y != 0)
             {
-                float _scale = transform.localScale.x + Input.mouseScrollDelta.y * 0.1f;
+                float _scale = transform.localScale.x + Input.mouseScrollDelta.y * scaleSpeed;
                 _scale = Mathf.Clamp(_scale, minScale, maxScale);
                 transform.localScale = new Vector3(_scale, _scale, 1);
             }

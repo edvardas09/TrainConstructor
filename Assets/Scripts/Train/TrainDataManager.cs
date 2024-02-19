@@ -15,9 +15,9 @@ namespace TrainConstructor.Train
         public bool IsRandom => isRandom;
 
 
-        private List<TrainPartSO> trainParts = new List<TrainPartSO>();
-        private List<Train> createdTrains = new List<Train>();
-        private List<Texture2D> snapshots = new List<Texture2D>();
+        private readonly List<TrainPartSO> trainParts = new List<TrainPartSO>();
+        private readonly List<Train> createdTrains = new List<Train>();
+        private readonly List<Texture2D> snapshots = new List<Texture2D>();
 
         private Train selectedTrain;
         private bool isRandom;

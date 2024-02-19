@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using TrainConstructor.Shared;
 using TrainConstructor.Train;
@@ -6,7 +5,6 @@ using TutoTOONS;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static UnityEditor.FilePathAttribute;
 
 namespace TrainConstructor.TrainSelection
 {
@@ -19,7 +17,6 @@ namespace TrainConstructor.TrainSelection
         [SerializeField] private bool isRandom;
 
         private Train.Train train;
-        private AdRewardCanvas adRewardCanvas;
 
         private void OnEnable()
         {
@@ -31,10 +28,9 @@ namespace TrainConstructor.TrainSelection
             trainButton.onClick.RemoveListener(TrainSelected);
         }
 
-        public void Setup(Train.Train _train, Texture2D _snapshot, AdRewardCanvas _adRewardCanvas)
+        public void Setup(Train.Train _train, Texture2D _snapshot)
         {
             train = _train;
-            adRewardCanvas = _adRewardCanvas;
 
             trainId.text = _train.Id;
 

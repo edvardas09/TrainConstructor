@@ -33,7 +33,7 @@ namespace TrainConstructor.TrainEditor
         private const string TRAIN_ID_EMPTY_WARNING_TEXT    = "Train ID cannot be empty!";
         private const string TRAIN_ID_EXISTS_WARNING_TEXT   = "Train with this ID already exists!";
 
-        private List<CreatedTrainButton> createdTrainButtons = new List<CreatedTrainButton>();
+        private readonly List<CreatedTrainButton> createdTrainButtons = new List<CreatedTrainButton>();
 
         private void OnEnable()
         {

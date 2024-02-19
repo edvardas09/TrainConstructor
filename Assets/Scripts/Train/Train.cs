@@ -10,10 +10,10 @@ namespace TrainConstructor.Train
         public string Id => id;
         public bool IsLockedWithAnAd => isLockedWithAnAd;
 
-        public void Setup(string id, bool isLockedWithAnAd)
+        public void Setup(string _id, bool _isLockedWithAnAd)
         {
-            this.id = id;
-            this.isLockedWithAnAd = isLockedWithAnAd;
+            id = _id;
+            isLockedWithAnAd = _isLockedWithAnAd;
         }
 
         public Bounds GetBounds()

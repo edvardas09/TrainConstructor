@@ -17,8 +17,8 @@ namespace TrainConstructor.Gameplay
 
         private Train.Train spawnedTrain;
         private List<TrainPart> trainParts = new List<TrainPart>();
-        private List<TrainPart> availablePartSelections = new List<TrainPart>();
-        private List<GameObject> spawnedPartOptions = new List<GameObject>();
+        private readonly List<TrainPart> availablePartSelections = new List<TrainPart>();
+        private readonly List<GameObject> spawnedPartOptions = new List<GameObject>();
 
         private Vector3 partScale;
 

@@ -22,20 +22,20 @@ namespace TrainConstructor.UI
             }
         }
 
-        public void Show(string message, Action onConfirm, Action onCancel)
+        public void Show(string _message, Action _onConfirm, Action _onCancel)
         {
             confirmButton.onClick.RemoveAllListeners();
             cancelButton.onClick.RemoveAllListeners();
 
-            messageText.text = message;
+            messageText.text = _message;
             confirmButton.onClick.AddListener(() =>
             {
-                onConfirm?.Invoke();
+                _onConfirm?.Invoke();
                 Hide();
             });
             cancelButton.onClick.AddListener(() =>
             {
-                onCancel?.Invoke();
+                _onCancel?.Invoke();
                 Hide();
             });
 
