@@ -18,11 +18,6 @@ namespace TrainConstructor.Gameplay
         private Vector3 defaultScale;
         private Vector3 trainScale;
 
-        private void Awake()
-        {
-            defaultScale = transform.localScale;
-        }
-
         public void Setup(TrainPartSO _trainPartSO, Vector3 _trainScale)
         {
             trainPartSO = _trainPartSO;
@@ -30,6 +25,9 @@ namespace TrainConstructor.Gameplay
 
             spriteRenderer.sprite = _trainPartSO.MainTexture;
             boxCollider2D.size = _trainPartSO.MainTexture.bounds.size;
+
+            ScaleToParentSize();
+            defaultScale = transform.localScale;
         }
 
         private void OnMouseDrag()
@@ -51,6 +49,17 @@ namespace TrainConstructor.Gameplay
             ScaleToTrainSize();
             boxCollider2D.enabled = false;
             OnTrainPartSelected?.Invoke(this);
+        }
+
+        private void ScaleToParentSize()
+        {
+            transform.localScale = Vector3.one;
+
+            Vector3 _bounds = trainPartSO.MainTexture.bounds.size / transform.localScale.x;
+            Vector3 _parentBounds = transform.parent.GetComponent<RectTransform>().rect.size;
+            float _newScale = _parentBounds.x / _bounds.x;
+
+            transform.localScale = new Vector3(_newScale, _newScale, _newScale);
         }
 
         private void ScaleToTrainSize()
