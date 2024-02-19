@@ -40,6 +40,7 @@ namespace TrainConstructor.TrainSelection
             {
                 adButton.onClick.AddListener(UnlockTrainWithAd);
                 trainButton.onClick.RemoveListener(TrainSelected);
+                trainButton.interactable = false;
             }
 
             if (_snapshot == null)
