@@ -10,17 +10,19 @@ namespace TrainConstructor.Editor
 {
     public class PartsEditor : EditorWindow
     {
-        private const string EDITOR_PATH = "Assets/Editor/PartsEditor/PartsEditor.uxml";
-        private const string PARTS_FOLDER = "Assets/ScriptableObjects/TrainParts";
+        private const string EDITOR_NAME                    = "Parts Editor";
 
-        private const string ID_TEXT_FIELD_NAME = "id-text-field";
-        private const string TYPE_DROPDOWN_NAME = "type-dropdown";
-        private const string SUBTYPE_DROPDOWN_NAME = "subtype-dropdown";
-        private const string MAIN_TEXTURE_FIELD_NAME = "main-texture-field";
-        private const string OUTLINE_TEXTURE_FIELD_NAME = "outline-texture-field";
-        private const string CREATE_BUTTON_NAME = "create-button";
-        private const string EXISTING_PARTS_LIST_NAME = "existing-parts-list";
-        private const string ERROR_LABEL_NAME = "error-label";
+        private const string EDITOR_PATH                    = "Assets/Editor/PartsEditor/PartsEditor.uxml";
+        private const string PARTS_FOLDER                   = "Assets/ScriptableObjects/TrainParts";
+
+        private const string ID_TEXT_FIELD_NAME             = "id-text-field";
+        private const string TYPE_DROPDOWN_NAME             = "type-dropdown";
+        private const string SUBTYPE_DROPDOWN_NAME          = "subtype-dropdown";
+        private const string MAIN_TEXTURE_FIELD_NAME        = "main-texture-field";
+        private const string OUTLINE_TEXTURE_FIELD_NAME     = "outline-texture-field";
+        private const string CREATE_BUTTON_NAME             = "create-button";
+        private const string EXISTING_PARTS_LIST_NAME       = "existing-parts-list";
+        private const string ERROR_LABEL_NAME               = "error-label";
 
         private TextField idTextField;
         private EnumField typeDropdown;
@@ -38,7 +40,7 @@ namespace TrainConstructor.Editor
         public static void ShowWindow()
         {
             EditorWindow _editorWindow = GetWindow(typeof(PartsEditor));
-            _editorWindow.titleContent = new GUIContent("Parts Editor");
+            _editorWindow.titleContent = new GUIContent(EDITOR_NAME);
         }
 
         private void CreateGUI()
@@ -86,9 +88,9 @@ namespace TrainConstructor.Editor
             return _result;
         }
 
-        private void CheckTypeSubtypes(Enum newValue)
+        private void CheckTypeSubtypes(Enum _newValue)
         {
-            TrainPartType _type = (TrainPartType)newValue;
+            TrainPartType _type = (TrainPartType)_newValue;
             TrainPartTypeRelationsSO _typeRelations = typesRelations.Find((_relations) => _relations.Type == _type);
             if (_typeRelations != null && _typeRelations.SubTypes.Count > 0)
             {

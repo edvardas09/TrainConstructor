@@ -19,7 +19,7 @@ namespace TrainConstructor.Editor
         private Sprite previousMainTexture;
         private Sprite previousOutlineTexture;
 
-        private List<TrainPartTypeRelationsSO> typesRelations = new List<TrainPartTypeRelationsSO>();
+        private readonly List<TrainPartTypeRelationsSO> typesRelations = new List<TrainPartTypeRelationsSO>();
 
         void OnEnable()
         {
