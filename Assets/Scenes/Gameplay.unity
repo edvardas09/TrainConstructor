@@ -376,6 +376,7 @@ MonoBehaviour:
   trainPartOptionPrefab: {fileID: 8497041111464984384, guid: a2ffe14bf8e4a224892e443409c9a950, type: 3}
   trainPartOptionsParent: {fileID: 727301265}
   levelFinishedParticles: {fileID: 359058115}
+  partPlacedParticles: {fileID: 1643099059}
 --- !u!4 &1633906774
 Transform:
   m_ObjectHideFlags: 0
@@ -390,6 +391,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!198 &1643099059 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 2219189024081856779, guid: 895c6d094b6b213418cddcfb520298e9, type: 3}
+  m_PrefabInstance: {fileID: 1924128129}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1821310307
 PrefabInstance:
   m_ObjectHideFlags: 0
