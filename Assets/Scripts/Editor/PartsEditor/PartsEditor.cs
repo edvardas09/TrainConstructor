@@ -12,7 +12,7 @@ namespace TrainConstructor.Editor
     {
         private const string EDITOR_NAME                    = "Parts Editor";
 
-        private const string EDITOR_PATH                    = "Assets/Editor/PartsEditor/PartsEditor.uxml";
+        private const string EDITOR_PATH                    = "Assets/Scripts/Editor/PartsEditor/PartsEditor.uxml";
         private const string PARTS_FOLDER                   = "Assets/ScriptableObjects/TrainParts";
 
         private const string ID_TEXT_FIELD_NAME             = "id-text-field";
