@@ -178,10 +178,10 @@ namespace TrainConstructor.Gameplay
             SceneManager.LoadScene(Scenes.TrainSelection.ToString());
         }
 
-        private void ShowPartPlacedParticle(Transform transform)
+        private void ShowPartPlacedParticle(Transform _partTransform)
         {
-            partPlacedParticles.transform.localScale = transform.localScale;
-            partPlacedParticles.transform.position = transform.position;
+            partPlacedParticles.transform.localScale = _partTransform.localScale;
+            partPlacedParticles.transform.position = _partTransform.position;
             partPlacedParticles.Play();
         }
     }
