@@ -51,12 +51,15 @@ namespace TrainConstructor.TrainEditor
             createdTrains = TrainDataManager.Instance.LoadCreatedTrains();
             trainParts = TrainDataManager.Instance.LoadTrainParts();
 
-            CreatedTrainsLoaded?.Invoke(TrainDataManager.Instance.CreatedTrains);
-
             ValidateParts();
 
             CreateNewTrain();
             SpawnPartSelections();
+        }
+
+        private void Start()
+        {
+            CreatedTrainsLoaded?.Invoke(TrainDataManager.Instance.CreatedTrains);
         }
 
         public void LoadTrain(Train.Train _train)
