@@ -14,6 +14,7 @@ namespace TrainConstructor.Gameplay
         [SerializeField] private GameObject trainPartOptionPrefab;
         [SerializeField] private Transform trainPartOptionsParent;
         [SerializeField] private ParticleSystem levelFinishedParticles;
+        [SerializeField] private ParticleSystem partPlacedParticles;
 
         private Train.Train spawnedTrain;
         private List<TrainPart> trainParts = new List<TrainPart>();
@@ -119,15 +120,17 @@ namespace TrainConstructor.Gameplay
                 return;
             }
 
-            TrainPart _trainPart = _hit.collider.GetComponent<TrainPart>();
-            if (_trainPart == null)
+            if (!_hit.collider.TryGetComponent<TrainPart>(out var _trainPart))
             {
                 return;
             }
 
+            _trainPart.Setup(_trainPartOption.TrainPartSO);
             _trainPart.ShowMainTexture();
             _trainPart.GetComponent<Collider2D>().enabled = false;
             trainParts.Remove(_trainPart);
+
+            ShowPartPlacedParticle(_trainPart.transform);
 
             if (availablePartSelections.Count == 0)
             {
@@ -173,6 +176,13 @@ namespace TrainConstructor.Gameplay
             levelFinishedParticles.Play();
             yield return new WaitForSeconds(3);
             SceneManager.LoadScene(Scenes.TrainSelection.ToString());
+        }
+
+        private void ShowPartPlacedParticle(Transform transform)
+        {
+            partPlacedParticles.transform.localScale = transform.localScale;
+            partPlacedParticles.transform.position = transform.position;
+            partPlacedParticles.Play();
         }
     }
 }
