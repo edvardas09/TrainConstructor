@@ -4,11 +4,20 @@ namespace TrainConstructor.ReusableComponents
 {
     public class DragAndZoom : MonoBehaviour
     {
+        [SerializeField] private Camera mainCamera;
         [SerializeField] private float minScale = 0.5f;
         [SerializeField] private float maxScale = 2f;
         [SerializeField] private float scaleSpeed = 0.1f;
 
         private Vector3 offsetFromCenter;
+
+        private void OnValidate()
+        {
+            if (mainCamera == null && Camera.main != null)
+            {
+                mainCamera = Camera.main;
+            }
+        }
 
         private void OnMouseDown()
         {

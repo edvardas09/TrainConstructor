@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1eb6b46da19a53943add1be16cad3ab9, type: 3}
+  m_Name: CreatedTrainsSO
+  m_EditorClassIdentifier: 
+  CreatedTrains:
+  - {fileID: 4570368324364935762, guid: d17ee99091906bb4f943b50007c89ff2, type: 3}
+  - {fileID: 5053166181209876488, guid: 540433c6777d7ab4887b3455482fd1b1, type: 3}
+  - {fileID: 2243928426502627892, guid: 1f1f7a1fd3cfa6b40857a481abc0e3cf, type: 3}

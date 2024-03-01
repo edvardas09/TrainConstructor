@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using TrainConstructor.Train;
+using TrainConstructor.TrainData;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -113,15 +113,12 @@ namespace TrainConstructor.Editor
             }
 
             TrainPartSO _trainPart = CreateInstance<TrainPartSO>();
-            _trainPart.Id = idTextField.value;
-            _trainPart.Type = (TrainPartType)typeDropdown.value;
-            _trainPart.MainTexture = (Sprite)mainTextureField.value;
-            _trainPart.OutlineTexture = (Sprite)outlineTextureField.value;
-
-            if (subtypeDropdown.style.display != DisplayStyle.None)
-            {
-                _trainPart.SubType = (TrainPartSubtype)subtypeDropdown.value;
-            }
+            _trainPart.Setup(
+                idTextField.value, 
+                (TrainPartType)typeDropdown.value, 
+                (TrainPartSubtype)subtypeDropdown.value,
+                (Sprite)mainTextureField.value,
+                (Sprite)outlineTextureField.value);
 
             AssetDatabase.CreateAsset(_trainPart, $"{PARTS_FOLDER}/{_trainPart.Id}.asset");
             AssetDatabase.SaveAssets();

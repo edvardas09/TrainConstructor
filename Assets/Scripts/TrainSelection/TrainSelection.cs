@@ -1,6 +1,6 @@
 using TMPro;
 using TrainConstructor.Shared;
-using TrainConstructor.Train;
+using TrainConstructor.TrainData;
 using TutoTOONS;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,7 +16,7 @@ namespace TrainConstructor.TrainSelection
         [SerializeField] private Button adButton;
         [SerializeField] private bool isRandom;
 
-        private Train.Train train;
+        private Train train;
 
         private void OnEnable()
         {
@@ -28,7 +28,7 @@ namespace TrainConstructor.TrainSelection
             trainButton.onClick.RemoveListener(TrainSelected);
         }
 
-        public void Setup(Train.Train _train, Texture2D _snapshot)
+        public void Setup(Train _train)
         {
             train = _train;
 
@@ -43,13 +43,13 @@ namespace TrainConstructor.TrainSelection
                 trainButton.interactable = false;
             }
 
-            if (_snapshot == null)
+            if (_train.Snapshot == null)
             {
                 Debug.LogError($"Snapshot for train {_train.Id} does not exists");
                 return;
             }
 
-            trainImage.sprite = Sprite.Create(_snapshot, new Rect(0, 0, _snapshot.width, _snapshot.height), new Vector2(0.5f, 0.5f));
+            trainImage.sprite = _train.Snapshot;
             trainImage.gameObject.SetActive(true);
         }
 
@@ -57,7 +57,7 @@ namespace TrainConstructor.TrainSelection
         {
             if (isRandom)
             {
-                TrainDataManager.Instance.SetRandomTrain();
+                TrainDataManager.Instance.SetSelectedTrain(null);
             }
             else
             {

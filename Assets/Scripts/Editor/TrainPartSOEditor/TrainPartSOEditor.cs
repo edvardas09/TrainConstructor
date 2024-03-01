@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using TrainConstructor.Train;
+using TrainConstructor.TrainData;
 using UnityEditor;
 using UnityEngine;
 

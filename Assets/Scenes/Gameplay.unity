@@ -688,6 +688,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 5282979281446305619, guid: 068bf45bd65de85479112e6c216c2079, type: 3}
+      propertyPath: targetCamera
+      value: 
+      objectReference: {fileID: 2089948051}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 068bf45bd65de85479112e6c216c2079, type: 3}
 --- !u!1001 &5319554948525997562
@@ -753,6 +757,10 @@ PrefabInstance:
       propertyPath: partPlacedParticles
       value: 
       objectReference: {fileID: 1643099059}
+    - target: {fileID: 5319554950159879599, guid: 387855a3064678348b4d8e5ba14ef91e, type: 3}
+      propertyPath: trainPartOptionPrefab
+      value: 
+      objectReference: {fileID: 8273613604238311569, guid: a2ffe14bf8e4a224892e443409c9a950, type: 3}
     - target: {fileID: 5319554950159879599, guid: 387855a3064678348b4d8e5ba14ef91e, type: 3}
       propertyPath: levelFinishedParticles
       value: 

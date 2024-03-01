@@ -8,7 +8,7 @@ namespace TrainConstructor.TrainEditor
         [SerializeField] private float hoverScale = 1.1f;
         [SerializeField] private float hoverScaleTime = 0.2f;
 
-        public Action MouseOverStateChanged;
+        public event Action MouseOverStateChanged;
 
         private void OnMouseEnter()
         {

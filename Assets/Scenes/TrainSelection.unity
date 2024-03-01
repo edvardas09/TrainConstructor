@@ -435,6 +435,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 6454547606062280328, guid: f46746826cf64e34a8f7bf9bd63d71f3, type: 3}
+      propertyPath: createdTrainsSO
+      value: 
+      objectReference: {fileID: 11400000, guid: e7145d81b76bca849bc1463edaa135ab, type: 2}
+    - target: {fileID: 6454547606062280328, guid: f46746826cf64e34a8f7bf9bd63d71f3, type: 3}
       propertyPath: trainSelectionParent
       value: 
       objectReference: {fileID: 852151802}

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TrainConstructor.Shared;
-using TrainConstructor.Train;
+using TrainConstructor.TrainData;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,19 +11,28 @@ namespace TrainConstructor.Gameplay
 {
     public class GameplayManager : MonoBehaviour
     {
+        [SerializeField] private Camera mainCamera;
         [SerializeField] private int maxTrainParts = 5;
         [SerializeField] private Button backButton;
-        [SerializeField] private GameObject trainPartOptionPrefab;
+        [SerializeField] private TrainPartOption trainPartOptionPrefab;
         [SerializeField] private Transform trainPartOptionsParent;
         [SerializeField] private ParticleSystem levelFinishedParticles;
         [SerializeField] private ParticleSystem partPlacedParticles;
 
-        private Train.Train spawnedTrain;
+        private Train spawnedTrain;
         private List<TrainPart> trainParts = new List<TrainPart>();
         private readonly List<TrainPart> availablePartSelections = new List<TrainPart>();
-        private readonly List<GameObject> spawnedPartOptions = new List<GameObject>();
+        private readonly List<TrainPartOption> spawnedPartOptions = new List<TrainPartOption>();
 
         private Vector3 partScale;
+
+        private void OnValidate()
+        {
+            if (mainCamera == null && Camera.main != null)
+            {
+                mainCamera = Camera.main;
+            }
+        }
 
         private void OnEnable()
         {
@@ -44,7 +53,7 @@ namespace TrainConstructor.Gameplay
         private void SetupSelectedTrain()
         {
             //spawn selected train
-            Train.Train _selectedTrain = TrainDataManager.Instance.SelectedTrain;
+            Train _selectedTrain = TrainDataManager.Instance.SelectedTrain;
             if (_selectedTrain == null)
             {
                 Debug.LogWarning("No train selected, opening train selection scene");
@@ -52,10 +61,40 @@ namespace TrainConstructor.Gameplay
                 return;
             }
 
-            spawnedTrain = Instantiate(_selectedTrain, Vector3.zero, Quaternion.identity);
+            if (TrainDataManager.Instance.IsRandom)
+            {
+                TrainDataManager.Instance.LoadTrainParts();
+            }
 
-            //remove DraggablePart component from all parts
-            trainParts = spawnedTrain.GetComponentsInChildren<TrainPart>().ToList();
+            spawnedTrain = Instantiate(_selectedTrain, Vector3.zero, Quaternion.identity);
+            SetupTrainParts();
+            PositionTrain();
+        }
+
+        private void PositionTrain()
+        {
+            Vector2 _padding = new Vector2(0.25f, 0.25f);
+            Bounds _bounds = spawnedTrain.GetBounds();
+
+            float _maxWidth = Vector3.Distance(mainCamera.ViewportToWorldPoint(new Vector3(_padding.x, 0, 0)),
+                mainCamera.ViewportToWorldPoint(new Vector3(1f - _padding.x, 0, 0)));
+            float _maxHeight = Vector3.Distance(mainCamera.ViewportToWorldPoint(new Vector3(0, _padding.y, 0)),
+                               mainCamera.ViewportToWorldPoint(new Vector3(0, 1f - _padding.y, 0)));
+
+            float _scale = Mathf.Min(_maxWidth / _bounds.size.x, _maxHeight / _bounds.size.y);
+            spawnedTrain.transform.localScale = Vector3.one * _scale;
+
+            //center the train
+            Vector3 _center = _bounds.center;
+            Vector3 _newPosition = -_center * _scale;
+            _newPosition.y += 2;
+            spawnedTrain.transform.position = _newPosition;
+            partScale = trainParts[0].transform.localScale * _scale;
+        }
+
+        private void SetupTrainParts()
+        {
+            trainParts = spawnedTrain.PartList;
             if (trainParts.Count == 0)
             {
                 Debug.LogError("No parts found in the selected train");
@@ -70,30 +109,8 @@ namespace TrainConstructor.Gameplay
                     _part.Randomize();
                 }
 
-                Destroy(_part.GetComponent<DraggablePart>());
                 _part.ShowOutlineTexture();
-                _part.GetComponent<Collider2D>().enabled = false;
             }
-
-            //fit loaded train to the screen
-            Vector2 _padding = new Vector2(0.25f, 0.25f);
-            Bounds _bounds = spawnedTrain.GetBounds();
-
-            float _maxWidth = Vector3.Distance(Camera.main.ViewportToWorldPoint(new Vector3(_padding.x, 0.5f, 0)),
-                Camera.main.ViewportToWorldPoint(new Vector3(1f - _padding.x, 0.5f, 0)));
-            float _maxHeight = Vector3.Distance(Camera.main.ViewportToWorldPoint(new Vector3(0.5f, _padding.y, 0)),
-                               Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 1f - _padding.y, 0)));
-
-            float _scale = Mathf.Min(_maxWidth / _bounds.size.x, _maxHeight / _bounds.size.y);
-            spawnedTrain.transform.localScale = Vector3.one * _scale;
-
-            //center the train
-            Vector3 _center = _bounds.center;
-            Vector3 _newPosition = -_center * _scale;
-            _newPosition.y += 2;
-            spawnedTrain.transform.position = _newPosition;
-
-            partScale = trainParts[0].transform.localScale * _scale;
         }
 
         private void SpawnInitialPartSelections()
@@ -103,51 +120,48 @@ namespace TrainConstructor.Gameplay
                 return;
             }
 
-            for (int i = 0; i < maxTrainParts; i++)
+            int _initialPartCount = Mathf.Min(maxTrainParts, availablePartSelections.Count);
+            for (int i = 0; i < _initialPartCount; i++)
             {
                 TrainPart _part = availablePartSelections[Random.Range(0, availablePartSelections.Count)];
                 availablePartSelections.Remove(_part);
-                GameObject _partSelectionObject = Instantiate(trainPartOptionPrefab, trainPartOptionsParent);
-                TrainPartOption _partSelection = _partSelectionObject.GetComponentInChildren<TrainPartOption>();
-                _partSelection.Setup(_part.TrainPartSO, partScale);
-                _partSelection.OnTrainPartSelected += OnTrainPartSelected;
+                TrainPartOption _partSelection = Instantiate(trainPartOptionPrefab, trainPartOptionsParent);
+                _partSelection.Setup(_part.TrainPartSO, partScale, mainCamera);
                 _partSelection.OnTrainPartReleased += OnTrainPartReleased;
 
-                spawnedPartOptions.Add(_partSelectionObject);
+                spawnedPartOptions.Add(_partSelection);
             }
         }
 
         private void OnTrainPartReleased(TrainPartOption _trainPartOption)
         {
-            RaycastHit2D _hit = Physics2D.Raycast(_trainPartOption.transform.position, Vector2.zero);
+            RaycastHit2D? _hit = GetHit(_trainPartOption);
 
-            List<TrainPart> _trainPartsOfType = GetPartsOfType(_trainPartOption.TrainPartSO);
-            foreach (TrainPart _part in _trainPartsOfType)
-            {
-                _part.GetComponent<Collider2D>().enabled = false;
-            }
-
-            if (_hit.collider == null)
+            if (_hit == null || _hit.Value.collider == null)
             {
                 return;
             }
 
-            if (!_hit.collider.TryGetComponent<TrainPart>(out var _trainPart))
+            if (!_hit.Value.collider.TryGetComponent<TrainPart>(out var _trainPart))
             {
                 return;
             }
 
             _trainPart.Setup(_trainPartOption.TrainPartSO);
             _trainPart.ShowMainTexture();
-            _trainPart.GetComponent<Collider2D>().enabled = false;
+            _trainPart.BoxCollider2D.enabled = false;
             trainParts.Remove(_trainPart);
 
             ShowPartPlacedParticle(_trainPart.transform);
+            SetupNextPart(_trainPartOption);
+        }
 
+        private void SetupNextPart(TrainPartOption _trainPartOption)
+        {
             if (availablePartSelections.Count == 0)
             {
-                spawnedPartOptions.Remove(_trainPartOption.transform.parent.gameObject);
-                Destroy(_trainPartOption.transform.parent.gameObject);
+                spawnedPartOptions.Remove(_trainPartOption);
+                Destroy(_trainPartOption.gameObject);
 
                 if (spawnedPartOptions.Count == 0)
                 {
@@ -157,25 +171,22 @@ namespace TrainConstructor.Gameplay
                 return;
             }
 
-            _trainPartOption.gameObject.SetActive(false);
+            _trainPartOption.HidePart();
             TrainPart _nextPart = availablePartSelections[Random.Range(0, availablePartSelections.Count)];
-            _trainPartOption.Setup(_nextPart.TrainPartSO, partScale);
+            _trainPartOption.Setup(_nextPart.TrainPartSO, partScale, mainCamera);
             availablePartSelections.Remove(_nextPart);
         }
 
-        private void OnTrainPartSelected(TrainPartOption _trainPartOption)
+        private RaycastHit2D? GetHit(TrainPartOption _trainPartOption)
         {
-            List<TrainPart> _trainPartsOfType = GetPartsOfType(_trainPartOption.TrainPartSO);
-            if (_trainPartsOfType.Count == 0)
+            List<RaycastHit2D> _hits = Physics2D.RaycastAll(_trainPartOption.transform.position, Vector2.zero).ToList();
+            if (_hits.Count == 0)
             {
-                Debug.LogError($"No parts of type {_trainPartOption.TrainPartSO.Type} and subtype {_trainPartOption.TrainPartSO.SubType} found in the train");
-                return;
+                return null;
             }
 
-            foreach (TrainPart _part in _trainPartsOfType)
-            {
-                _part.GetComponent<Collider2D>().enabled = true;
-            }
+            List<TrainPart> _trainPartsOfType = GetPartsOfType(_trainPartOption.TrainPartSO);
+            return _hits.FirstOrDefault(x => _trainPartsOfType.Contains(x.collider.GetComponent<TrainPart>()));
         }
 
         private List<TrainPart> GetPartsOfType(TrainPartSO _trainPartSO)

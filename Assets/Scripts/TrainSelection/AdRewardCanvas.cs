@@ -13,7 +13,7 @@ namespace TrainConstructor.TrainSelection
         [SerializeField] private CanvasGroup canvasGroup;
         [SerializeField] private float fadeDuration = 0.5f;
 
-        public Action<bool> AdFinished;
+        public event Action<bool> AdFinished;
 
         private void OnEnable()
         {

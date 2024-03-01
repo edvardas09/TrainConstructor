@@ -1,9 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TrainConstructor.Train;
+using TrainConstructor.TrainData;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,12 +10,19 @@ namespace TrainConstructor.TrainEditor
 {
     public class TrainEditor : MonoBehaviour
     {
+        public static TrainEditor Instance;
+
+        [SerializeField] private CreatedTrainsSO createdTrainsSO;
+        [SerializeField] private Camera mainCamera;
+        [SerializeField] private TrainUIManager trainUIManager;
+
         [Tooltip("The order of the train parts in the editor, add only parts with different types or subtypes")]
         [SerializeField] private List<TrainPartSO> trainPartsOrder = new List<TrainPartSO>();
 
         [Header("UI References")]
         [SerializeField] private DeletePartObject deletePartObject;
         [SerializeField] private GameObject canvasObject;
+        [SerializeField] private GameObject snapshotCanvasObject;
 
         [Header("Train part selection references")]
         [SerializeField] private TrainPartSelection trainPartSelectionPrefab;
@@ -26,54 +32,77 @@ namespace TrainConstructor.TrainEditor
         [SerializeField] private TrainPart trainPartPrefab;
         [SerializeField] private Transform trainObjectParent;
 
+        [Header("Snapshot references")]
+        [SerializeField] private Camera snapshotCamera;
+        [SerializeField] private RenderTexture snapshotRenderTexture;
+
         private const string DEFAULT_TRAIN_OBJECT_NAME = "Train";
 
-
-        public Action<List<Train.Train>> CreatedTrainsLoaded;
-        public Action<Train.Train> TrainAdded;
-        public Action<Train.Train> TrainDeleted;
-        public Action<Train.Train, Texture2D> SnapshotUpdated;
-
-        public Train.Train TrainObject => trainObject;
+        public Train TrainObject => trainObject;
 
         private List<TrainPartSO> trainParts = new List<TrainPartSO>();
-        private List<Train.Train> createdTrains = new List<Train.Train>();
+        private List<Train> createdTrains = new List<Train>();
 
-        private Train.Train trainObject;
+        private Train trainObject;
         private int offsetMultiplier;
         private bool isOverDeleteObject;
 
-        private void Awake()
+        private void OnValidate()
+        {
+            if (mainCamera == null && Camera.main != null)
+            {
+                mainCamera = Camera.main;
+            }
+        }
+
+        private void OnEnable()
         {
             deletePartObject.MouseOverStateChanged += OnDeleteStateChanged;
+        }
 
-            TrainDataManager.Instance.LoadSnapshots();
-            createdTrains = TrainDataManager.Instance.LoadCreatedTrains();
+        private void OnDisable()
+        {
+            deletePartObject.MouseOverStateChanged -= OnDeleteStateChanged;
+        }
+
+        private void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+
+        private void Start()
+        {
+            TrainDataManager.Instance.SetCreatedTrainsSO(createdTrainsSO);
+            createdTrains = TrainDataManager.Instance.CreatedTrains;
             trainParts = TrainDataManager.Instance.LoadTrainParts();
 
             ValidateParts();
 
             CreateNewTrain();
             SpawnPartSelections();
+
+            trainUIManager.SpawnCreatedTrainButtons(TrainDataManager.Instance.CreatedTrains);
         }
 
-        private void Start()
-        {
-            CreatedTrainsLoaded?.Invoke(TrainDataManager.Instance.CreatedTrains);
-        }
-
-        public void LoadTrain(Train.Train _train)
+        public void LoadTrain(Train _train)
         {
             Destroy(trainObject.gameObject);
             trainObject = Instantiate(_train, trainObjectParent);
             offsetMultiplier = trainObject.transform.childCount;
 
-            foreach (Transform _child in trainObject.transform)
+            foreach (TrainPart _part in trainObject.PartList)
             {
-                TrainPart _trainPart = _child.GetComponent<TrainPart>();
-                int _order = trainPartsOrder.FindIndex(_partOrder => _partOrder.Type == _trainPart.TrainPartSO.Type && _partOrder.SubType == _trainPart.TrainPartSO.SubType);
-                DraggablePart _trainPartComponent = _child.GetComponent<DraggablePart>();
-                _trainPartComponent.SetOrder(_order);
+                DraggablePart _trainPartComponent = _part.gameObject.GetComponent<DraggablePart>();
+                _trainPartComponent.enabled = true;
+                int _order = trainPartsOrder.FindIndex(_partOrder => _partOrder.Type == _part.TrainPartSO.Type && _partOrder.SubType == _part.TrainPartSO.SubType);
+                _trainPartComponent.Setup(_part, _order, mainCamera, false);
                 _trainPartComponent.PartPutDown += OnPartPutDown;
             }
         }
@@ -87,41 +116,58 @@ namespace TrainConstructor.TrainEditor
 
         public void SaveTrain(string _trainId, bool _isLockedWithAnAd)
         {
-            trainObject.Setup(_trainId, _isLockedWithAnAd);
+            StartCoroutine(CaptureScreenshot(_trainId, _isLockedWithAnAd));
+        }
+
+        private void SetupNewTrain(string _trainId, bool _isLockedWithAnAd)
+        {
+            Sprite _snapshot = AssetDatabase.LoadAssetAtPath<Sprite>($"{Paths.SNAPSHOTS_PATH}/{_trainId}.png");
+            trainObject.Setup(_trainId, _isLockedWithAnAd, _snapshot);
             string _path = $"{Paths.CREATED_TRAINS_PATH}/{_trainId}.prefab";
+
+            foreach (TrainPart _part in trainObject.PartList)
+            {
+                DraggablePart _partComponent = _part.gameObject.GetComponent<DraggablePart>();
+                _partComponent.enabled = false;
+            }
+
             GameObject _savedTrain = PrefabUtility.SaveAsPrefabAsset(trainObject.gameObject, _path);
             AssetDatabase.Refresh();
+
+            foreach (TrainPart _part in trainObject.PartList)
+            {
+                DraggablePart _partComponent = _part.gameObject.GetComponent<DraggablePart>();
+                _partComponent.enabled = true;
+            }
 
             if (createdTrains.Any(_train => _train.Id == trainObject.Id))
             {
                 return;
             }
 
-            Train.Train _savedTrainComponent = _savedTrain.GetComponent<Train.Train>();
+            Train _savedTrainComponent = _savedTrain.GetComponent<Train>();
             createdTrains.Add(_savedTrainComponent);
-            TrainAdded?.Invoke(_savedTrainComponent);
-        }
-
-        public void TakeSnapshot()
-        {
-            StartCoroutine(CaptureScreenshot());
+            SaveCreatedTrainsSO();
+            trainUIManager.TrainAdded(_savedTrainComponent);
+            TrainDataManager.Instance.SaveCreatedTrains();
         }
 
         public void DeleteTrain()
         {
             if (!string.IsNullOrWhiteSpace(trainObject.Id))
             {
-                Train.Train _savedTrain = createdTrains.Find(_train => _train.Id == trainObject.Id);
+                Train _savedTrain = createdTrains.Find(_train => _train.Id == trainObject.Id);
 
                 string _path = AssetDatabase.GetAssetPath(_savedTrain);
                 AssetDatabase.DeleteAsset(_path);
                 AssetDatabase.Refresh();
 
                 createdTrains.Remove(_savedTrain);
-                TrainDeleted?.Invoke(_savedTrain);
+                SaveCreatedTrainsSO();
+                trainUIManager.TrainDeleted(_savedTrain);
             }
 
-            Texture2D _snapshot = TrainDataManager.Instance.GetTrainSnapshot(trainObject.Id);
+            Sprite _snapshot = trainObject.Snapshot;
             if (_snapshot != null)
             {
                 string _path = AssetDatabase.GetAssetPath(_snapshot);
@@ -134,7 +180,7 @@ namespace TrainConstructor.TrainEditor
 
         private void CreateNewTrain()
         {
-            trainObject = new GameObject(DEFAULT_TRAIN_OBJECT_NAME).AddComponent<Train.Train>();
+            trainObject = new GameObject(DEFAULT_TRAIN_OBJECT_NAME).AddComponent<Train>();
             trainObject.transform.SetParent(trainObjectParent);
         }
 
@@ -170,14 +216,16 @@ namespace TrainConstructor.TrainEditor
             int _order = trainPartsOrder.FindIndex(_partOrder => _partOrder.Type == _trainPartSO.Type && _partOrder.SubType == _trainPartSO.SubType);
             DraggablePart _trainPartComponent = _trainPart.GetComponent<DraggablePart>();
             _trainPart.Setup(_trainPartSO);
-            _trainPartComponent.Setup(_trainPart, _order);
+            _trainPartComponent.Setup(_trainPart, _order, mainCamera, true);
             _trainPartComponent.PartPutDown += OnPartPutDown;
+            TrainObject.AddPart(_trainPart);
         }
 
         private void OnPartPutDown(TrainPart _trainPart)
         {
             if (isOverDeleteObject)
             {
+                TrainObject.RemovePart(_trainPart);
                 Destroy(_trainPart.gameObject);
                 return;
             }
@@ -192,22 +240,45 @@ namespace TrainConstructor.TrainEditor
             isOverDeleteObject = !isOverDeleteObject;
         }
 
-        private IEnumerator CaptureScreenshot()
+        private IEnumerator CaptureScreenshot(string _trainId, bool _isLockedWithAnAd)
         {
             canvasObject.SetActive(false);
+            snapshotCanvasObject.SetActive(false);
 
             yield return new WaitForEndOfFrame();
-            string _path = $"{Directory.GetCurrentDirectory()}/{Paths.SNAPSHOTS_PATH}/{trainObject.Id}.png";
-            ScreenCapture.CaptureScreenshot(_path);
-            yield return new WaitForSeconds(0.5f);
+            string _path = $"{Directory.GetCurrentDirectory()}/{Paths.SNAPSHOTS_PATH}/{_trainId}.png";
+
+            snapshotCamera.Render();
+            RenderTexture.active = snapshotRenderTexture;
+            Texture2D _snapshot = new Texture2D(snapshotRenderTexture.width, snapshotRenderTexture.height, TextureFormat.RGB24, false);
+            _snapshot.ReadPixels(new Rect(0, 0, snapshotRenderTexture.width, snapshotRenderTexture.height), 0, 0);
+            _snapshot.Apply();
+
+            byte[] _bytes = _snapshot.EncodeToPNG();
+            File.WriteAllBytes(_path, _bytes);
+
+            AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+
+            TextureImporter _textureImporter = (TextureImporter)AssetImporter.GetAtPath($"{Paths.SNAPSHOTS_PATH}/{_trainId}.png");
+            _textureImporter.textureType = TextureImporterType.Sprite;
+            _textureImporter.SaveAndReimport();
 
             Debug.Log("Snapshot saved to " + _path);
 
             canvasObject.SetActive(true);
+            snapshotCanvasObject.SetActive(true);
 
-            TrainDataManager.Instance.LoadSnapshots();
-            SnapshotUpdated?.Invoke(trainObject, TrainDataManager.Instance.GetTrainSnapshot(trainObject.Id));
+            trainUIManager.SnapshotUpdated(trainObject);
+
+            SetupNewTrain(_trainId, _isLockedWithAnAd);
+        }
+
+        private void SaveCreatedTrainsSO()
+        {
+            createdTrainsSO.CreatedTrains = createdTrains;
+            EditorUtility.SetDirty(createdTrainsSO);
+            AssetDatabase.SaveAssets();
         }
 
     }

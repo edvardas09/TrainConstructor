@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace TrainConstructor.Train
+namespace TrainConstructor.TrainData
 {
     public class TrainPart : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private BoxCollider2D boxCollider2D;
-        [SerializeField, HideInInspector] private TrainPartSO trainPartSO;
+        [SerializeField] private TrainPartSO trainPartSO;
 
         public TrainPartSO TrainPartSO => trainPartSO;
         public BoxCollider2D BoxCollider2D => boxCollider2D;
@@ -45,11 +45,19 @@ namespace TrainConstructor.Train
         public void ShowOutlineTexture()
         {
             spriteRenderer.sprite = trainPartSO.OutlineTexture;
+            spriteRenderer.color = new Color(1, 1, 1, 1);
         }
 
         public void ShowMainTexture()
         {
             spriteRenderer.sprite = trainPartSO.MainTexture;
+            spriteRenderer.color = new Color(1, 1, 1, 1);
+        }
+
+        public void ShowMainTextureHint()
+        {
+            spriteRenderer.sprite = trainPartSO.MainTexture;
+            spriteRenderer.color = new Color(1, 1, 1, 0.5f);
         }
     }
 }
