@@ -59,7 +59,7 @@ namespace TrainConstructor.Gameplay
                     hoveredTrainPart.ShowOutlineTexture();
                 }
 
-                _newHoveredTrainPart.ShowMainTextureHint();
+                _newHoveredTrainPart.ShowMainTextureHint(trainPartSO.MainTexture);
                 hoveredTrainPart = _newHoveredTrainPart;
             }
             else if (_newHoveredTrainPart == null && hoveredTrainPart != null)

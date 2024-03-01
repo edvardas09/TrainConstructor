@@ -1,0 +1,9 @@
+<linker>
+	<assembly fullname="TutoTOONS.Subscription" preserve="all"/>
+	<assembly fullname="TutoTOONS.Subscription.Editor" preserve="all"/>
+	<assembly fullname="TutoTOONS.Base.Editor" preserve="all"/>
+	<assembly fullname="TutoTOONS.Purchasing.Editor" preserve="all"/>
+	<assembly fullname="TutoTOONS.Purchasing" preserve="all"/>
+	<assembly fullname="TutoTOONS.Zip" preserve="all"/>
+	<assembly fullname="TutoTOONS.Base" preserve="all"/>
+</linker>

@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +14,7 @@ namespace TrainConstructor.TrainEditor
         public static TrainEditor Instance;
 
         [SerializeField] private CreatedTrainsSO createdTrainsSO;
+        [SerializeField] private TrainPartsSO trainPartsSO;
         [SerializeField] private Camera mainCamera;
         [SerializeField] private TrainUIManager trainUIManager;
 
@@ -79,9 +81,9 @@ namespace TrainConstructor.TrainEditor
 
         private void Start()
         {
-            TrainDataManager.Instance.SetCreatedTrainsSO(createdTrainsSO);
+            TrainDataManager.Instance.SetCreatedTrainsSO(createdTrainsSO, trainPartsSO);
             createdTrains = TrainDataManager.Instance.CreatedTrains;
-            trainParts = TrainDataManager.Instance.LoadTrainParts();
+            trainParts = TrainDataManager.Instance.TrainParts;
 
             ValidateParts();
 
@@ -283,3 +285,4 @@ namespace TrainConstructor.TrainEditor
 
     }
 }
+#endif

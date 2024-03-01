@@ -61,11 +61,6 @@ namespace TrainConstructor.Gameplay
                 return;
             }
 
-            if (TrainDataManager.Instance.IsRandom)
-            {
-                TrainDataManager.Instance.LoadTrainParts();
-            }
-
             spawnedTrain = Instantiate(_selectedTrain, Vector3.zero, Quaternion.identity);
             SetupTrainParts();
             PositionTrain();

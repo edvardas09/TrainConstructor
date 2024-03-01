@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Collections.Generic;
 using TrainConstructor.TrainData;
 using UnityEditor;
@@ -79,3 +80,4 @@ namespace TrainConstructor.Editor
         }
     }
 }
+#endif

@@ -164,6 +164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createdTrainsSO: {fileID: 11400000, guid: e7145d81b76bca849bc1463edaa135ab, type: 2}
+  trainPartsSO: {fileID: 11400000, guid: 1f6466c9d923d7143abc17bea28ff5a9, type: 2}
   mainCamera: {fileID: 1935137551}
   trainUIManager: {fileID: 1858985436}
   trainPartsOrder:

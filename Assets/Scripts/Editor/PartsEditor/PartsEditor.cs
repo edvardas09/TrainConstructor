@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
 using TrainConstructor.TrainData;
@@ -24,6 +25,8 @@ namespace TrainConstructor.Editor
         private const string EXISTING_PARTS_LIST_NAME       = "existing-parts-list";
         private const string ERROR_LABEL_NAME               = "error-label";
 
+        private const string TRAIN_PARTS_SO_PATH            = "Assets/ScriptableObjects/TrainParts/TrainPartsSO.asset";
+
         private TextField idTextField;
         private EnumField typeDropdown;
         private EnumField subtypeDropdown;
@@ -32,6 +35,8 @@ namespace TrainConstructor.Editor
         private Button createButton;
         private ScrollView existingPartsList;
         private Label errorLabel;
+
+        private TrainPartsSO trainPartsSO;
 
         private List<TrainPartSO> existingParts = new List<TrainPartSO>();
         private List<TrainPartTypeRelationsSO> typesRelations = new List<TrainPartTypeRelationsSO>();
@@ -51,6 +56,7 @@ namespace TrainConstructor.Editor
 
             existingParts = LoadAssets<TrainPartSO>();
             typesRelations = LoadAssets<TrainPartTypeRelationsSO>();
+            trainPartsSO = AssetDatabase.LoadAssetAtPath<TrainPartsSO>(TRAIN_PARTS_SO_PATH);
 
             idTextField = rootVisualElement.Q<TextField>(ID_TEXT_FIELD_NAME);
 
@@ -123,6 +129,8 @@ namespace TrainConstructor.Editor
             AssetDatabase.CreateAsset(_trainPart, $"{PARTS_FOLDER}/{_trainPart.Id}.asset");
             AssetDatabase.SaveAssets();
 
+            trainPartsSO.AddPart(_trainPart);
+
             existingParts.Add(_trainPart);
             existingPartsList.Add(new Label(_trainPart.Id));
 
@@ -164,3 +172,4 @@ namespace TrainConstructor.Editor
         }
     }
 }
+#endif

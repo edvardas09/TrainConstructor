@@ -7,6 +7,7 @@ namespace TrainConstructor.TrainSelection
     public class TrainSelectionManager : MonoBehaviour
     {
         [SerializeField] private CreatedTrainsSO createdTrainsSO;
+        [SerializeField] private TrainPartsSO trainPartsSO;
 
         [SerializeField] private TrainSelection trainSelectionPrefab;
         [SerializeField] private Transform trainSelectionParent;
@@ -15,7 +16,7 @@ namespace TrainConstructor.TrainSelection
 
         private void Awake()
         {
-            TrainDataManager.Instance.SetCreatedTrainsSO(createdTrainsSO);
+            TrainDataManager.Instance.SetCreatedTrainsSO(createdTrainsSO, trainPartsSO);
             trains = TrainDataManager.Instance.CreatedTrains;
 
             SpawnTrainSelections();

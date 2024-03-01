@@ -19,8 +19,6 @@ namespace TrainConstructor.TrainData
 
             spriteRenderer.sprite = _trainPartSO.MainTexture;
             boxCollider2D.size = _trainPartSO.MainTexture.bounds.size;
-
-            boxCollider2D.enabled = false;
         }
 
         public void Randomize()
@@ -54,9 +52,9 @@ namespace TrainConstructor.TrainData
             spriteRenderer.color = new Color(1, 1, 1, 1);
         }
 
-        public void ShowMainTextureHint()
+        public void ShowMainTextureHint(Sprite _texture)
         {
-            spriteRenderer.sprite = trainPartSO.MainTexture;
+            spriteRenderer.sprite = _texture;
             spriteRenderer.color = new Color(1, 1, 1, 0.5f);
         }
     }
