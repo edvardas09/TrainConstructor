@@ -166,14 +166,10 @@ namespace TrainConstructor.Gameplay
             availablePartSelections.Remove(_nextPart);
         }
 
-        private List<TrainPart> GetPartsOfType(TrainPartSO _trainPartSO)
-        {
-            return trainParts.FindAll(x => x.TrainPartSO.Type == _trainPartSO.Type && x.TrainPartSO.SubType == _trainPartSO.SubType);
-        }
-
         private IEnumerator LevelFinished()
         {
             levelFinishedParticles.Play();
+            spawnedTrain.DriveAway();
             yield return new WaitForSeconds(3);
             SceneManager.LoadScene(Scenes.TrainSelection.ToString());
         }

@@ -2,7 +2,8 @@
     "name": "TrainConstructor.Train",
     "rootNamespace": "",
     "references": [
-        "GUID:002d1e1ab687b19449eba5f36ce57177"
+        "GUID:002d1e1ab687b19449eba5f36ce57177",
+        "GUID:3b6c432ea5502d64eaf445311116f023"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

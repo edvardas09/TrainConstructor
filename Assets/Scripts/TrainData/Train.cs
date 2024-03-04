@@ -10,6 +10,10 @@ namespace TrainConstructor.TrainData
         [SerializeField] private Sprite snapshot;
         [SerializeField] private List<TrainPart> partList = new List<TrainPart>();
 
+        private const float ANIMATION_DURATION = 1f;
+        private const float GO_BACK_DISTANCE = -4f;
+        private const float GO_FORWARD_DISTANCE = 20f;
+
         public string Id => id;
         public bool IsLockedWithAnAd => isLockedWithAnAd;
         public Sprite Snapshot => snapshot;
@@ -48,6 +52,14 @@ namespace TrainConstructor.TrainData
             }
 
             return _bounds;
+        }
+
+        public void DriveAway()
+        {
+            LeanTween.moveLocalX(gameObject, GO_BACK_DISTANCE, ANIMATION_DURATION).setEase(LeanTweenType.easeOutQuad).setOnComplete(() =>
+            {
+                LeanTween.moveLocalX(gameObject, GO_FORWARD_DISTANCE, ANIMATION_DURATION).setEase(LeanTweenType.easeInQuad);
+            });
         }
     }
 }

@@ -15,6 +15,7 @@ namespace TrainConstructor.Gameplay
         private const float ANIMATIONS_DURATION = 0.5f;
         private const float PADDING_MULTIPLIER = 0.7f;
         private const float RAYCAST_SIZE_MULTIPLIER = 0.5f;
+        private const float DRAGGING_Z = -7f;
 
         public event Action<TrainPartOption> OnTrainPartReleased;
 
@@ -54,7 +55,7 @@ namespace TrainConstructor.Gameplay
         private void OnMouseDrag()
         {
             Vector3 _mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-            _mousePosition.z = transform.position.z;
+            _mousePosition.z = DRAGGING_Z;
             transform.position = _mousePosition;
 
             TrainPart _newHoveredTrainPart = CheckForCorrectHit();
@@ -140,7 +141,7 @@ namespace TrainConstructor.Gameplay
         {
             LeanTween.cancel(gameObject);
             LeanTween.scale(gameObject, defaultScale, ANIMATIONS_DURATION).setEase(LeanTweenType.easeOutBack);
-            LeanTween.moveLocal(gameObject, new Vector3(defaultPosition.x, defaultPosition.y, transform.localPosition.z), ANIMATIONS_DURATION)
+            LeanTween.moveLocal(gameObject, new Vector3(defaultPosition.x, defaultPosition.y, defaultPosition.z), ANIMATIONS_DURATION)
                 .setEase(LeanTweenType.easeOutBack)
                 .setOnComplete(() =>
                 {
