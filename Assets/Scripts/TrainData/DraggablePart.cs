@@ -58,6 +58,9 @@ namespace TrainConstructor.TrainData
 
         private void OnMouseUp()
         {
+            if (!isActiveAndEnabled)
+                return;
+
             isDragging = false;
             PlaceObjectInOrder();
             PartPutDown?.Invoke(trainPart);
@@ -66,6 +69,9 @@ namespace TrainConstructor.TrainData
 
         private void OnMouseDown()
         {
+            if (!isActiveAndEnabled)
+                return;
+
             isDragging = true;
             offsetFromCenter = transform.position - mainCamera.ScreenToWorldPoint(Input.mousePosition);
             trainPart.BoxCollider2D.enabled = false;
@@ -73,11 +79,17 @@ namespace TrainConstructor.TrainData
 
         private void OnMouseEnter()
         {
+            if (!isActiveAndEnabled)
+                return;
+
             isMouseOver = true;
         }
 
         private void OnMouseExit()
         {
+            if (!isActiveAndEnabled)
+                return;
+
             isMouseOver = false;
         }
 

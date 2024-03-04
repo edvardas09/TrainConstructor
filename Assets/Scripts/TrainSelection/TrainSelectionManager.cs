@@ -8,6 +8,7 @@ namespace TrainConstructor.TrainSelection
     {
         [SerializeField] private CreatedTrainsSO createdTrainsSO;
         [SerializeField] private TrainPartsSO trainPartsSO;
+        [SerializeField] private TrainSelection randomTrain;
 
         [SerializeField] private TrainSelection trainSelectionPrefab;
         [SerializeField] private Transform trainSelectionParent;
@@ -27,9 +28,10 @@ namespace TrainConstructor.TrainSelection
             foreach (Train _train in trains)
             {
                 TrainSelection _trainSelection = Instantiate(trainSelectionPrefab, trainSelectionParent);
-                _trainSelection.transform.SetAsFirstSibling();
                 _trainSelection.Setup(_train);
             }
+
+            randomTrain.transform.SetAsLastSibling();
         }
     }
 }

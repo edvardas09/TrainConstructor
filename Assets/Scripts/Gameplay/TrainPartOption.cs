@@ -14,16 +14,21 @@ namespace TrainConstructor.Gameplay
 
         private const float ANIMATIONS_DURATION = 0.5f;
         private const float PADDING_MULTIPLIER = 0.7f;
+        private const float RAYCAST_SIZE_MULTIPLIER = 0.5f;
 
         public event Action<TrainPartOption> OnTrainPartReleased;
 
         public TrainPartSO TrainPartSO => trainPartSO;
+        public BoxCollider2D BoxCollider2D => boxCollider2D;
+        public TrainPart HoveredTrainPart => hoveredTrainPart;
 
         private TrainPartSO trainPartSO;
         private Vector3 defaultPosition;
         private Vector3 defaultScale;
         private Vector3 trainScale;
         private TrainPart hoveredTrainPart;
+
+        private bool returnedToDefaultPosition = true;
 
         public void Setup(TrainPartSO _trainPartSO, Vector3 _trainScale, Camera _mainCamera)
         {
@@ -32,7 +37,8 @@ namespace TrainConstructor.Gameplay
             mainCamera = _mainCamera;
 
             spriteRenderer.sprite = _trainPartSO.MainTexture;
-            boxCollider2D.size = _trainPartSO.MainTexture.bounds.size;
+            float _longerBound = Mathf.Max(_trainPartSO.MainTexture.bounds.size.x, _trainPartSO.MainTexture.bounds.size.y);
+            boxCollider2D.size = new Vector2(_longerBound, _longerBound);
 
             hoveredTrainPart = null;
 
@@ -81,15 +87,17 @@ namespace TrainConstructor.Gameplay
             ScaleToTrainSize();
             boxCollider2D.enabled = false;
 
-            if (defaultPosition == Vector3.zero)
+            if (returnedToDefaultPosition)
             {
                 defaultPosition = transform.localPosition;
             }
+
+            returnedToDefaultPosition = false;
         }
 
         private TrainPart CheckForCorrectHit()
         {
-            List<RaycastHit2D> _hits = Physics2D.RaycastAll(transform.position, Vector2.zero).ToList();
+            List<RaycastHit2D> _hits = Physics2D.CapsuleCastAll(transform.position, boxCollider2D.size * transform.localScale * RAYCAST_SIZE_MULTIPLIER, CapsuleDirection2D.Horizontal, 0, Vector2.zero).ToList();
             if (_hits.Count == 0)
             {
                 return null;
@@ -134,7 +142,11 @@ namespace TrainConstructor.Gameplay
             LeanTween.scale(gameObject, defaultScale, ANIMATIONS_DURATION).setEase(LeanTweenType.easeOutBack);
             LeanTween.moveLocal(gameObject, new Vector3(defaultPosition.x, defaultPosition.y, transform.localPosition.z), ANIMATIONS_DURATION)
                 .setEase(LeanTweenType.easeOutBack)
-                .setOnComplete(() => spriteRenderer.enabled = true);
+                .setOnComplete(() =>
+                {
+                    spriteRenderer.enabled = true;
+                    returnedToDefaultPosition = true;
+                });
         }
     }
 }

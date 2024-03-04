@@ -130,14 +130,8 @@ namespace TrainConstructor.Gameplay
 
         private void OnTrainPartReleased(TrainPartOption _trainPartOption)
         {
-            RaycastHit2D? _hit = GetHit(_trainPartOption);
-
-            if (_hit == null || _hit.Value.collider == null)
-            {
-                return;
-            }
-
-            if (!_hit.Value.collider.TryGetComponent<TrainPart>(out var _trainPart))
+            TrainPart _trainPart = _trainPartOption.HoveredTrainPart;
+            if (_trainPart == null)
             {
                 return;
             }
@@ -170,18 +164,6 @@ namespace TrainConstructor.Gameplay
             TrainPart _nextPart = availablePartSelections[Random.Range(0, availablePartSelections.Count)];
             _trainPartOption.Setup(_nextPart.TrainPartSO, partScale, mainCamera);
             availablePartSelections.Remove(_nextPart);
-        }
-
-        private RaycastHit2D? GetHit(TrainPartOption _trainPartOption)
-        {
-            List<RaycastHit2D> _hits = Physics2D.RaycastAll(_trainPartOption.transform.position, Vector2.zero).ToList();
-            if (_hits.Count == 0)
-            {
-                return null;
-            }
-
-            List<TrainPart> _trainPartsOfType = GetPartsOfType(_trainPartOption.TrainPartSO);
-            return _hits.FirstOrDefault(x => _trainPartsOfType.Contains(x.collider.GetComponent<TrainPart>()));
         }
 
         private List<TrainPart> GetPartsOfType(TrainPartSO _trainPartSO)

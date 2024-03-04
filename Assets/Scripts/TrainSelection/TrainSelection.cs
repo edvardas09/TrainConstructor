@@ -13,7 +13,7 @@ namespace TrainConstructor.TrainSelection
         [SerializeField] private Image trainImage;
         [SerializeField] private TextMeshProUGUI trainId;
         [SerializeField] private Button trainButton;
-        [SerializeField] private Button adButton;
+        [SerializeField] private Image adImage;
         [SerializeField] private bool isRandom;
 
         private Train train;
@@ -34,13 +34,12 @@ namespace TrainConstructor.TrainSelection
 
             trainId.text = _train.Id;
 
-            adButton.gameObject.SetActive(_train.IsLockedWithAnAd);
+            adImage.gameObject.SetActive(_train.IsLockedWithAnAd);
 
             if (_train.IsLockedWithAnAd)
             {
-                adButton.onClick.AddListener(UnlockTrainWithAd);
+                trainButton.onClick.AddListener(UnlockTrainWithAd);
                 trainButton.onClick.RemoveListener(TrainSelected);
-                trainButton.interactable = false;
             }
 
             if (_train.Snapshot == null)

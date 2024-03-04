@@ -435,6 +435,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 6454547606062280328, guid: f46746826cf64e34a8f7bf9bd63d71f3, type: 3}
+      propertyPath: randomTrain
+      value: 
+      objectReference: {fileID: 7470882884089422751}
+    - target: {fileID: 6454547606062280328, guid: f46746826cf64e34a8f7bf9bd63d71f3, type: 3}
       propertyPath: trainPartsSO
       value: 
       objectReference: {fileID: 11400000, guid: 1f6466c9d923d7143abc17bea28ff5a9, type: 2}
@@ -641,3 +645,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b9b7e34f2c0e0a04886de43a07334531, type: 3}
+--- !u!114 &7470882884089422751 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2968593858775508103, guid: b9b7e34f2c0e0a04886de43a07334531, type: 3}
+  m_PrefabInstance: {fileID: 7470882884089422750}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 875fa09d1792e3842970fd5f71de5a7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
